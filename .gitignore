@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+InProcessData/*.tif
+InProcessData/*.tif.ovr
+InProcessData/*.prj
+InProcessData/*.dbf
+InProcessData/*.shp
+InProcessData/*.shx
+InProcessData/*.mxd
+InProcessData/*.tif.aux.xml
+*.docx
