@@ -260,5 +260,60 @@ slice_sample(grid_90_frid_proj_lfire_reclass, n = 10)
 #Not sure what thresholds to use for dNBR, so I am leaving that alone for now. 
 
 
+#### Bring in CalVeg CWHR ####
+grid_90_frid_proj_lfire_reclass <- st_read("InProcessData/grid_90_veg_sev.shp")
+
+# Bring in Calveg CWHR Type
+# I producecd this raster layer in ArcPro by 1) dissolving the Calveg layer 
+# by CWHR_TYPE; 2) creating a lookup table using all of the cwhr codes
+# from all of the different regions (I exported the attribute tables from 
+# the dissolved shapefiles, then using calveg_cwhr_lookuptable.R to create
+# a lookup table). 3) I used the polygon to raster tool after joining the lookup
+# table to each dissolved shapefile. I matched the projection, extent, and 
+# resolution to the fire severity layer rdnbr_2020_allfires.tif (that I produced
+# in the combine_severity_rasters.R code). 4) Lastly, I mosaiced all of the 
+# rasters from the individual regions into a single statewide cwhr raster. 
+
+cwhr <- raster(paste0(geo_dir, "CalVeg/ProcessedOutput/EVMid_R05_CA_cwhr.tif"))
+proj4string(cwhr)
+
+#Extract values for each grid point: 
+cwhr_extract <- raster::extract(cwhr, grid_90_frid_proj_lfire_reclass)
+
+#Use the cwhr lookup table to assign cwhr classes to the raster values
+cwhr_lookup <- read.csv(paste0(geo_dir, "CalVeg/ProcessedOutput/LookupTables/cwhr_lookup.csv"), 
+                        stringsAsFactors = FALSE) 
+
+cwhr_extract2 <- as.data.frame(cwhr_extract) %>% 
+  left_join(., cwhr_lookup, by = c("cwhr_extract" = "cwhr"))
+
+#add values into grid points object:
+grid_90_frid_proj_lfire_reclass$cwhr <- cwhr_extract2$CWHR_TYPE
+#check output:
+slice_sample(grid_90_frid_proj_lfire_reclass, n = 20)
+
+#remove unnecessary layers for mem:
+rm(cwhr)
+rm(cwhr_extract)
+rm(cwhr_extract2)
+rm(cwhr_lookup)
+
+
+#### Add Calveg Ecoregion Section ####
+#I dissolved the CalvegTiles_Ecoregions07_5.gdb geodatabase by ecoregion_section
+  # to get this shapefile. 
+
+#Codes are here: https://www.fs.usda.gov/detail/r5/landmanagement/resourcemanagement/?cid=fsbdev3_048066
+ecoregion <- st_read(paste0(geo_dir, "CalVeg/ProcessedOutput/calveg_ecoregion_section.shp"))
+#Put in same coords as the grid_90: 
+ecoregion = st_transform(ecoregion, st_crs(grid_90_frid_proj_lfire_reclass))
+
+#Extract ecoregion for each point: 
+grid_90_veg_sev <- grid_90_frid_proj_lfire_reclass %>% 
+  st_join(., ecoregion[ , c("ECOREGION_")]) %>% 
+  rename(ecoregion_section = ECOREGION_)
+
+
 #### Save Data ####
-st_write(grid_90_frid_proj_lfire_reclass, "InProcessData/grid_90_veg_sev.shp")
+st_write(grid_90_veg_sev, "InProcessData/grid_90_veg_sev_eco.shp", overwrite = TRUE)
+
