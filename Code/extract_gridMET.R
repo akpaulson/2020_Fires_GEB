@@ -41,8 +41,9 @@ grid_90 <- st_transform(grid_90, crs = proj4string(prog))
 
 #bring in CA polygon (for subsetting weather rasters to CA): 
 ca <- st_read(paste0(geo_dir, "ca-state-boundary/CA_State_TIGER2016.shp"))
-
-
+#need 40 km buffer around CA in order to get the SLATER fire points
+  # in Oregon
+ca_40 <- st_buffer(ca, 40000)
 
 
 #### Extract day of burn for each point in the 90 m grid ####
@@ -58,9 +59,6 @@ slice_sample(grid_90, n = 10)
 #Remove extra layer to save memory: 
 rm(prog)
 rm(prog_extract)
-
-
-
 
 
 #### Which weather variables are available? ####
@@ -164,9 +162,9 @@ names(bi) <- bi_dates_julian
 
 # crop BI to CA: 
 # change projection of CA boundary to match gridMET:
-ca <- st_transform(ca, proj4string(bi))
+ca_40 <- st_transform(ca_40, proj4string(bi))
 # crop raster brick to CA:
-bi_ca <- crop(bi, ca)
+bi_ca <- crop(bi, ca_40)
 plot(bi_ca[[305]])
 
 
@@ -177,7 +175,7 @@ grid_90_proj <- st_transform(grid_90, proj4string(bi))
 rm(grid_90) #remove to save mem
 
 #Extract burning index values for each grid_90 point, output as matrix: 
-bi_extract <- extract(bi_ca, grid_90_proj)
+bi_extract <- raster::extract(bi_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
   # for each grid point) and 366 columns (one column for each day
@@ -220,6 +218,10 @@ burning_index[1000:1025]
 #Add burning_index to the grid_90 data: 
 grid_90_proj$burning_index <- burning_index
 
+slater <- grid_90_proj %>% 
+  filter(FIRE_NAME == "SLATER") %>% 
+  filter(is.na(day_of_burn))
+
 #remove large objects to save mem: 
 rm(bi)
 rm(bi_ca)
@@ -250,13 +252,13 @@ names(vs) <- bi_dates_julian
 
 # crop VS raster brick to CA (projection of CA already matched to 
   # gridMET data above): 
-vs_ca <- crop(vs, ca)
+vs_ca <- crop(vs, ca_40)
 plot(vs_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
   # already matched to gridMET data above), output as matrix: 
-vs_extract <- extract(vs_ca, grid_90_proj)
+vs_extract <- raster::extract(vs_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -330,13 +332,13 @@ names(vpd) <- bi_dates_julian
 
 # crop vpd raster brick to CA (projection of CA already matched to 
 # gridMET data above): 
-vpd_ca <- crop(vpd, ca)
+vpd_ca <- crop(vpd, ca_40)
 plot(vpd_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-vpd_extract <- extract(vpd_ca, grid_90_proj)
+vpd_extract <- raster::extract(vpd_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -393,13 +395,13 @@ names(rmax) <- bi_dates_julian
 
 # crop rmax raster brick to CA (projection of CA already matched to 
 # gridMET data above): 
-rmax_ca <- crop(rmax, ca)
+rmax_ca <- crop(rmax, ca_40)
 plot(rmax_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-rmax_extract <- extract(rmax_ca, grid_90_proj)
+rmax_extract <- raster::extract(rmax_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -459,13 +461,13 @@ names(rmin) <- bi_dates_julian
 
 # crop rmin raster brick to CA (projection of CA already matched to 
 # gridMET data above): 
-rmin_ca <- crop(rmin, ca)
+rmin_ca <- crop(rmin, ca_40)
 plot(rmin_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-rmin_extract <- extract(rmin_ca, grid_90_proj)
+rmin_extract <- raster::extract(rmin_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -527,13 +529,13 @@ names(erc) <- bi_dates_julian
 
 # crop erc raster brick to CA (projection of CA already matched to 
 # gridMET data above): 
-erc_ca <- crop(erc, ca)
+erc_ca <- crop(erc, ca_40)
 plot(erc_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-erc_extract <- extract(erc_ca, grid_90_proj)
+erc_extract <- raster::extract(erc_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -595,13 +597,13 @@ names(fm100) <- bi_dates_julian
 
 # crop fm100 raster brick to CA (projection of CA already matched to 
 # gridMET data above): 
-fm100_ca <- crop(fm100, ca)
+fm100_ca <- crop(fm100, ca_40)
 plot(fm100_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-fm100_extract <- extract(fm100_ca, grid_90_proj)
+fm100_extract <- raster::extract(fm100_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -661,13 +663,13 @@ names(fm1000) <- bi_dates_julian
 
 # crop fm1000 raster brick to CA (projection of CA already matched to 
 # gridMET data above): 
-fm1000_ca <- crop(fm1000, ca)
+fm1000_ca <- crop(fm1000, ca_40)
 plot(fm1000_ca[[305]])
 
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-fm1000_extract <- extract(fm1000_ca, grid_90_proj)
+fm1000_extract <- raster::extract(fm1000_ca, grid_90_proj)
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -721,6 +723,8 @@ grid_90_proj <- grid_90_proj %>%
          erc = energy_release_component, 
          fm100 = dead_fuel_moisture_100hr, 
          fm1000 = dead_fuel_moisture_1000hr)
+
+slice_sample(grid_90_proj, n = 10)
 
 
 st_write(grid_90_proj, "InProcessData/grid_90_grmt.shp")
