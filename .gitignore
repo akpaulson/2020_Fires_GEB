@@ -11,4 +11,12 @@ InProcessData/*.shp
 InProcessData/*.shx
 InProcessData/*.mxd
 InProcessData/*.tif.aux.xml
+InProcessData/*.zip
+CleanData/*.zip
 *.docx
+CleanData/*.dbf
+CleanData/*.shp
+CleanData/*.shx
+CleanData/*.mxd
+CleanData/*.prj
+
