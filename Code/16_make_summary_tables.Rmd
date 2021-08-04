@@ -33,6 +33,11 @@ er_crosswalk = read_csv(datadir("AncillaryData/EcologicalSection_crosswalk.csv")
 d = d %>%
   left_join(er_crosswalk,by=c(ecrgn_s="code"))
 
+# break TSLF into categories
+d = d %>%
+  mutate(TSLF_cat = cut(TSLF,breaks=c(-1,0,5,15,30,50,1000),labels=c("0","1-5","6-15","16-30","31-50","50+"), include.lowest=TRUE))
+
+
 ```
 
 
@@ -107,6 +112,39 @@ phs_wide = phs_wide %>%
   mutate(cwhr_gp = as.character(cwhr_gp))
 
 phs_wide[nrow(phs_wide),]$cwhr_gp = "OVERALL"
+
+datatable(phs_wide,options=list(pageLength=500, lengthChange=FALSE, dom='t', columnDefs =          list(list(className = 'dt-center', targets = "_all"))), width=500)
+```
+
+### Percent high severity by TSLF
+```{r}
+phs_by_tslf = d %>%
+  group_by(TSLF_cat) %>%
+  summarize(phs = sum(rdnbr_h)/n(),
+            n_pts = n()) %>%
+  mutate(phs = round(phs,2))
+
+sig_tslf = unique(phs_by_ecoregion$TSLF_cat)
+
+datatable(phs_by_tslf,options=list(pageLength=100, lengthChange=FALSE, dom='t', columnDefs =          list(list(className = 'dt-center', targets = "_all"))), width=500)
+```
+
+### Percent high severity by CWHR and TSLF
+Only including CWHR-TSLF combinations with > 1000 points
+```{r}
+phs_by_cwhr_and_tslf = d %>%
+  filter(cwhr_gp %in% sig_cwhr) %>%
+  group_by(cwhr_gp,TSLF_cat) %>%
+  summarize(phs = sum(rdnbr_h)/n(),
+            n_pts = n()) %>%
+  mutate(phs = round(phs,2)) %>%
+  filter(n_pts > 1000) %>%
+  select(-n_pts)
+
+# make it wide
+phs_wide = phs_by_cwhr_and_tslf %>%
+  mutate(across(everything(),as.character)) %>%
+  pivot_wider(names_from=TSLF_cat,values_from=phs,values_fill = list(phs="--"))
 
 datatable(phs_wide,options=list(pageLength=500, lengthChange=FALSE, dom='t', columnDefs =          list(list(className = 'dt-center', targets = "_all"))), width=500)
 ```
