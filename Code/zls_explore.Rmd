@@ -37,7 +37,9 @@ rm(d, d2)
 ```{r}
 ## Read in subset of clean data
 shp = read_sf("InProcessData/clean_sub.shp")
+```
 
+```{r}
 ## Also make an aspatial version and drop some columns not of immediate interest
 d = st_drop_geometry(shp) %>% 
   rename_all(tolower) %>% 
@@ -71,8 +73,9 @@ scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
 ds = mutate_at(d, .vars = c('tslf', 'ads_mort', 'bi'), 
                function(x) log(x + 0.01)) %>% 
   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), scale2)
+```
 
-
+```{r, eval = F}
 ## Fuel variables
 mf = glmer(rdnbr_h ~ tslf + ads_mort + (1|fire_na), family = binomial,
          data = ds)
@@ -99,7 +102,7 @@ mf_mchap = filter(ds, cwhr_gp %in% c("Montane chaparral")) %>%
 
 Likelihood of burning at high-severity appears to increase with TSLF for ypmc, the firs and even lowland chaparral. Maybe the opposite for montane chaparral but uncertain. ads mortlity was positively correlated with ypmc but unrelated to the others. No big surprises here.  
 
-```{r}
+```{r, eval= F}
 ## Weather variables
 mw = glmer(rdnbr_h ~ windspd + vpd + rhmin + bi + (1|fire_na),
            family = binomial, data = ds)
@@ -123,3 +126,25 @@ mw_mchap = filter(ds, cwhr_gp %in% c("Montane chaparral")) %>%
 ```
 
 vpd appears universally important. windspd and bi also for some veg types.  
+
+Let's put some things together.  
+
+```{r}
+ypmc = filter(ds, cwhr_gp %in% c("Yellow pine", "Mixed conifer"))
+rf = filter(ds, cwhr_gp %in% c("Red fir"))
+m_ypmc =  glmer(rdnbr_h ~ tslf + ads_mort +
+                  windspd + vpd + bi + (1|fire_na),
+                family = binomial, data = ypmc)
+summary(m_ypmc)
+
+library(brms)
+
+m_rf = glmer(rdnbr_h ~ tslf + vpd + (1|fire_na),
+             family = binomial,
+             data = rf)
+
+bm_rf = brm(rdnbr_h ~ (tslf + vpd) + (1|fire_na),
+              family = bernoulli("logit"), 
+              data = rf)
+```
+
