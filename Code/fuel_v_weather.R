@@ -32,7 +32,7 @@ d = m$data %>%
 
 ## combine fixed and random to mean effects of each fire
 fe = m %>% 
-  gather_draws(b_tslf, b_vpd, b_ads_mort, b_windspd) %>% 
+  gather_draws(b_tslf, b_vpd, b_ads_mort, b_windspd, b_fm1000) %>% 
   mutate(term = substring(.variable, 3))
 
 r_fire = m %>% 

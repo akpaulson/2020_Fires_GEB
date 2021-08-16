@@ -20,7 +20,7 @@ d = st_drop_geometry(shp) %>%
 
 ## Scale variables (some we may want to transfor first (e.g., ads_mort))
 scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
-ds = mutate_at(d, .vars = c('tslf', 'ads_mort', 'bi'), 
+ds = mutate_at(d, .vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
                function(x) log(x + 0.01)) %>% 
   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
                       'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), 
@@ -31,7 +31,7 @@ rf = filter(ds, cwhr_gp %in% c("Red fir"))
 ypmc = filter(ds, cwhr_gp %in% c("Yellow pine", "Mixed conifer"))
 veg5 = filter(d, cwhr_gp %in% c("Yellow pine", "Mixed conifer", "Red fir",
                                  "Lowland chaparral", "Redwood")) %>% 
-  mutate_at(.vars = c('tslf', 'ads_mort', 'bi'), 
+  mutate_at(.vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
             function(x) log(x + 0.01)) %>% 
   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
                       'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), 
@@ -57,7 +57,7 @@ veg5 = filter(d, cwhr_gp %in% c("Yellow pine", "Mixed conifer", "Red fir",
 #              chains = 2, cores = 2)
 
 ## allow everything to vary by fire ID and veg type
-#### ~35 min with 13K points; all fires and 5 veg types
+#### ~38 min with 13K points; all fires and 5 veg types
 #### 1% divergences w/ adapt_delta @ 0.8
 tic()
 bm = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
@@ -66,6 +66,7 @@ bm = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 +
               family = bernoulli("logit"), 
               data = veg5,
               chains = 2, cores = 2,
+         # control = list(adapt_delta = 0.9),
          backend = "cmdstanr")
 toc()
 
