@@ -1,0 +1,94 @@
+## Purpose: Build marginal effects plots 
+## Project: 2020_Fires_GEB
+## Upstream: model_build.R
+## Downstream:
+
+library(tidyverse)
+library(tidybayes)
+library(brms)
+library(ggdist)
+library(modelr)
+
+## read in model
+m = read_rds("Models/model0.rds")
+
+scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
+
+m$data2 = mutate(m$data2, 
+            tslf_l = log(tslf + 0.01))
+
+## set up plotting function
+f1 <- function(x_var, #model variable
+               x_var_orig, #unstandardized, but transformed
+               x_seq, #unstandardized scale
+               exp_x, #do we need to exponentiate x for plotting?,
+               veg_show) {
+  ## set up new data, gotta be an easier way to fill "typical" values
+  newdata0 <- data.frame(tslf = 0, ads_mort = 0, vpd = 0, windspd = 0, fm1000 = 0,
+                         fire_na = "new",
+                         cwhr_gp = c({{veg_show}}, "new")) %>% 
+    ## drop variable to be expanded below
+    dplyr::select(-{{x_var}})
+  
+  ## get range of values for user-defined variable
+  ## Note the use of "glue syntax" and "embracing" https://dplyr.tidyverse.org/articles/programming.html
+  
+  d_sum <- summarize(m$data2, 
+                      sd = sd({{x_var_orig}}, na.rm = T),
+                      mn = mean({{x_var_orig}}, na.rm = T))
+  
+  ## all combos of variable sequence and veg group
+  newdata <- data_grid(m$data,
+                       .x_us = x_seq,
+                       # "{{x_var}}" := seq_range({{x_var}}, n = 100),
+                       cwhr_gp = c({{veg_show}}, "new")) %>%
+    mutate({{x_var}} := (.x_us - d_sum$mn) / d_sum$sd) %>%
+  left_join(newdata0, by = "cwhr_gp") %>%
+  ## Get fitted draws (expected predictions)
+  add_epred_draws(m,
+                  #re_formula = NA,
+                  allow_new_levels = T) %>%
+  ## Just plotting means by group
+  group_by({{x_var}}, cwhr_gp) %>%
+  summarise(.epred = median(.epred), .groups = "drop") %>%
+  ## get unstandardized values
+  mutate(.x_us = {{x_var}} * d_sum$sd + d_sum$mn ) %>%
+  filter(cwhr_gp != "new")
+
+  ## The average effect
+  newdata1 = data_grid(m$data,
+                       .x_us = x_seq,
+                       # "{{x_var}}" := seq_range({{x_var}}, n = 100),
+                       fire_na = "new", cwhr_gp = "new") %>%
+    mutate({{x_var}} := (.x_us - d_sum$mn) / d_sum$sd) %>%
+    left_join(newdata0, by = c("fire_na", "cwhr_gp")) %>%
+    add_epred_draws(m, re_formula = NA) #%>%
+    # mutate(.x_us = {{x_var}} * d_sum$sd + d_sum$mn )
+  
+  if(exp_x == T) {
+    newdata$.x_us = exp(newdata$.x_us)
+    newdata1$.x_us = exp(newdata1$.x_us)
+  }
+
+  ## Plot "new" veg w/ CIs and means for others
+  ggplot(newdata1, aes(x = .x_us, y = .epred)) +
+    stat_lineribbon(.width = 0.95, size = 2) +
+    geom_line(data = newdata, aes(color = cwhr_gp), alpha = 0.85) +
+    scale_fill_manual(values = "grey80", guide = NULL) +
+    scale_color_brewer(palette = "Set2") +
+    ylim(0,1) +
+    theme_bw() +
+    theme(panel.grid.minor = element_blank()) +
+    ylab("High-severity Probability")
+}
+
+## TSLF
+f1(x_var_orig = tslf_l,
+   x_var = tslf,
+   x_seq = log(seq(1:111)),
+   exp_x = T,
+   veg_show = unique(m$data$cwhr_gp)) +
+  scale_x_continuous(breaks = c(0, 25, 50, 75, 100)) +
+  xlab('Years Since Last Fire')
+  
+  

@@ -68,6 +68,9 @@ p = ggplot(d2, aes(y = ep_median_tslf, x = ep_median_windspd,
   theme(panel.grid.minor = element_blank()) +
   ylab("TSLF Importance") + xlab("Wind Speed Importance") 
 
+save_plot("Figures/fuel_wind.png", p,
+          base_width = 8, base_height = 6)
+
 ## tslf vs. vpd
 p2 = ggplot(d2, aes(y = ep_median_tslf, x = ep_median_vpd, 
                    ymin = .lower_tslf, ymax = .upper_tslf,

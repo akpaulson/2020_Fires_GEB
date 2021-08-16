@@ -20,15 +20,15 @@ d = st_drop_geometry(shp) %>%
 
 ## Scale variables (some we may want to transfor first (e.g., ads_mort))
 scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
-ds = mutate_at(d, .vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
-               function(x) log(x + 0.01)) %>% 
-  mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
-                      'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), 
-            scale2)
+# ds = mutate_at(d, .vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
+#                function(x) log(x + 0.01)) %>% 
+#   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
+#                       'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), 
+#             scale2)
 
 ## subsetting by veg type to keep simple for now
-rf = filter(ds, cwhr_gp %in% c("Red fir"))
-ypmc = filter(ds, cwhr_gp %in% c("Yellow pine", "Mixed conifer"))
+# rf = filter(ds, cwhr_gp %in% c("Red fir"))
+# ypmc = filter(ds, cwhr_gp %in% c("Yellow pine", "Mixed conifer"))
 veg5 = filter(d, cwhr_gp %in% c("Yellow pine", "Mixed conifer", "Red fir",
                                  "Lowland chaparral", "Redwood")) %>% 
   mutate_at(.vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
@@ -77,6 +77,11 @@ toc()
 #               family = bernoulli("logit"), 
 #               data = ypmc,
 #               chains = 2, cores = 2)
+
+## Add original data to the model object for later use
+veg5_orig = filter(d, cwhr_gp %in% c("Yellow pine", "Mixed conifer", "Red fir",
+                                     "Lowland chaparral", "Redwood"))
+bm$data2 = veg5_orig
 
 ## Save model for later
 write_rds(bm, "Models/model0.rds")
