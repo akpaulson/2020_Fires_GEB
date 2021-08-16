@@ -15,7 +15,9 @@ m = read_rds("Models/model0.rds")
 scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
 
 m$data2 = mutate(m$data2, 
-            tslf_l = log(tslf + 0.01))
+            tslf_l = log(tslf + 0.01),
+            ads_l = log(ads_mort + 0.01),
+            fm1000_l = log(fm1000 + 0.01))
 
 ## set up plotting function
 f1 <- function(x_var, #model variable
@@ -90,5 +92,37 @@ f1(x_var_orig = tslf_l,
    veg_show = unique(m$data$cwhr_gp)) +
   scale_x_continuous(breaks = c(0, 25, 50, 75, 100)) +
   xlab('Years Since Last Fire')
+
+## vpd
+f1(x_var_orig = vpd,
+   x_var = vpd,
+   x_seq = seq_range(m$data2$vpd, n = 100),
+   exp_x = F,
+   veg_show = unique(m$data$cwhr_gp)) +
+  xlab("Vapor Preasure Deficit")
+
+## ads mortality
+f1(x_var_orig = ads_l,
+   x_var = ads_mort,
+   x_seq = seq_range(m$data2$ads_l, n = 100),
+   exp_x = T,
+   veg_show = unique(m$data$cwhr_gp)) +
+  xlab("ADS Mortality")
+
+## wind speed
+f1(x_var_orig = windspd,
+   x_var = windspd,
+   x_seq = seq_range(m$data2$windspd, n = 100),
+   exp_x = F,
+   veg_show = unique(m$data$cwhr_gp)) +
+  xlab("Wind Speed")
+
+## fm1000
+f1(x_var_orig = fm1000_l,
+   x_var = fm1000,
+   x_seq = seq_range(m$data2$fm1000_l, n = 100),
+   exp_x = T,
+   veg_show = unique(m$data$cwhr_gp)) +
+  xlab("FM 1000")
   
   
