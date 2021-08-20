@@ -31,38 +31,19 @@ scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
 # ypmc = filter(ds, cwhr_gp %in% c("Yellow pine", "Mixed conifer"))
 veg5 = filter(d, cwhr_gp %in% c("Yellow pine", "Mixed conifer", "Red fir",
                                  "Lowland chaparral", "Redwood")) %>% 
-  mutate_at(.vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
+  mutate_at(.vars = c('tslf', 'ads_mort', 'bi', 'fm1000', 'windspd'), 
             function(x) log(x + 0.01)) %>% 
   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
                       'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), 
             scale2)
 
-## playing with bayesian model structures
-
-## basic fixed effects with varying intercepts by fire
-# bm_rf = brm(rdnbr_h ~ (tslf + vpd) + (1|fire_na),
-#             family = bernoulli("logit"), 
-#             data = rf)
-# 
-# ## tslf and vpd vary by fire
-# bm_rf2 = brm(rdnbr_h ~ (tslf + vpd) | fire_na,
-#             family = bernoulli("logit"), 
-#             data = rf)
-# 
-# ## global effects with varying offsets for each fire
-# bm_ypmc = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
-#                 (0 + tslf + ads_mort + vpd + windspd + fm1000 | fire_na),
-#              family = bernoulli("logit"), 
-#              data = ypmc,
-#              chains = 2, cores = 2)
-
 ## allow everything to vary by fire ID and veg type
-#### ~38 min with 13K points; all fires and 5 veg types
+#### ~41 min with 13K points; all fires and 5 veg types
 #### 1% divergences w/ adapt_delta @ 0.8
 tic()
 bm = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
-           (0 + tslf + ads_mort + vpd + windspd + fm1000 | fire_na) +
-           (0 + tslf + ads_mort + vpd + windspd + fm1000 | cwhr_gp),
+           (tslf + ads_mort + vpd + windspd + fm1000 | fire_na) +
+           (tslf + ads_mort + vpd + windspd + fm1000 | cwhr_gp),
               family = bernoulli("logit"), 
               data = veg5,
               chains = 2, cores = 2,
@@ -70,19 +51,37 @@ bm = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 +
          backend = "cmdstanr")
 toc()
 
-## allow tslf and vpd/wind to interact. 
-## Does this tell us something about fuels vs. weather-driven fires?
-# bm_ypmc2 = brm(rdnbr_h ~ tslf*vpd + tslf*windspd + ads_mort + 
-#                 (tslf*vpd + tslf*windspd + ads_mort | fire_na),
-#               family = bernoulli("logit"), 
-#               data = ypmc,
-#               chains = 2, cores = 2)
+## are veg and fire ID confounding?
+#### 13 min
+tic()
+bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
+                (tslf + ads_mort + vpd + windspd + fm1000 | fire_na),
+              family = bernoulli("logit"), 
+              data = veg5,
+              chains = 2, cores = 2,
+              backend = "cmdstanr")
+toc()
+
+#### 30 min
+tic()
+bm_veg = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
+           (1 | fire_na) +
+           (tslf + ads_mort + vpd + windspd + fm1000 | cwhr_gp),
+         family = bernoulli("logit"), 
+         data = veg5,
+         chains = 2, cores = 2,
+         backend = "cmdstanr")
+toc()
+
 
 ## Add original data to the model object for later use
 veg5_orig = filter(d, cwhr_gp %in% c("Yellow pine", "Mixed conifer", "Red fir",
                                      "Lowland chaparral", "Redwood"))
 bm$data2 = veg5_orig
+bm_fire$data2 = veg5_orig
+bm_veg$data2 = veg5_orig
 
 ## Save model for later
 write_rds(bm, "Models/model0.rds")
-
+write_rds(bm_fire, "Models/model0_fires.rds")
+write_rds(bm_veg, "Models/model0_veg.rds")

@@ -10,7 +10,7 @@ library(ggdist)
 library(cowplot)
 
 ## Read in model
-m = read_rds("Models/model0.rds")
+m = read_rds("Models/model0_veg.rds")
 
 ## summarise fixed effects
 ## Will eventually want to do this for all veg types as well

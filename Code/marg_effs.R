@@ -10,7 +10,7 @@ library(ggdist)
 library(modelr)
 
 ## read in model
-m = read_rds("Models/model0.rds")
+m = read_rds("Models/model0_veg.rds")
 
 scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
 

@@ -18,11 +18,12 @@ library(DT)
 
 
 ## read in model
-m = read_rds("Models/model0.rds")
+m = read_rds("Models/model0_fires.rds")
 
 ## get median conditions of each fire
 d = m$data %>% 
-  dplyr::select(-cwhr_gp, - rdnbr_h) %>% 
+  dplyr::select(#-cwhr_gp, 
+                -rdnbr_h) %>% 
   pivot_longer(cols = tslf:windspd, names_to = "term") %>% 
   group_by(fire_na, term) %>% 
   summarise(mean = mean(value),
