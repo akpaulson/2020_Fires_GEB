@@ -112,8 +112,11 @@ make_correllogram = function(fire_na_foc) {
   d_foc = veg5 %>%
     filter(fire_na == fire_na_foc)
   
+  d_foc = d_foc %>%
+    sample_n(min(500,nrow(d_foc)))
+  
   corr = spline.correlog(x = d_foc$x, y = d_foc$y, z = d_foc$resid, resamp = 1000, xmax = 20000)
-  corr2 = correlog(x = d_foc$x, y = d_foc$y, z = d_foc$resid, increment=100, resamp = 1000)
+  #corr2 = correlog(x = d_foc$x, y = d_foc$y, z = d_foc$resid, increment=100, resamp = 1000)
   
   plot(corr)
   
@@ -133,7 +136,7 @@ fire_nas_foc = fire_nas[1:10]
 fire_nas_foc = names(fire_nas_foc)
 
 plan(multisession, workers = 3)
-corr_df = future_map_dfr(fire_nas_foc ,make_correllogram)
+corr_df = future_map_dfr(fire_nas_foc ,make_correllogram, .options=future_options(scheduling=Inf))
 
 corr_df_plot = corr_df %>%
   filter(dist >= 0.9)
@@ -148,7 +151,4 @@ p = ggplot(corr_df_plot,aes(x = dist,y = bound_0.5)) +
   theme_bw() +
   labs(x = "Distance (km)", y = "Correlation (Moran's I)")
 p
-
-
-
 
