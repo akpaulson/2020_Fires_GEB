@@ -52,9 +52,10 @@ bm = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 +
 toc()
 
 ## are veg and fire ID confounding?
-#### 13 min
+#### 24 min
 tic()
 bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
+                (1|cwhr_gp) +
                 (tslf + ads_mort + vpd + windspd + fm1000 | fire_na),
               family = bernoulli("logit"), 
               data = veg5,
