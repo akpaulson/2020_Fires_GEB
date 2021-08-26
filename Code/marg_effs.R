@@ -13,9 +13,10 @@ library(modelr)
 #### Grey mean curves will be shown for all veg types
 
 ## read in model
-m = read_rds("Models/model0_veg.rds")
+m = read_rds("Models/bm_veg.rds")
 
-scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
+scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm)) / 
+  sd(x, na.rm = na.rm)
 
 m$data2 = mutate(m$data2, 
             tslf_l = log(tslf + 0.01),
@@ -87,12 +88,14 @@ f1 <- function(x_var, #model variable
     ylab("High-severity Probability")
 }
 
+veg_gps = c("Mixed conifer", "Lowland chaparral", 
+            "Oak woodland", "Grassland and meadow")
 ## TSLF
 f1(x_var_orig = tslf_l,
    x_var = tslf,
    x_seq = log(seq(1:111)),
    exp_x = F,
-   veg_show = unique(m$data$cwhr_gp)) +
+   veg_show = veg_gps) +
   # scale_x_continuous(breaks = c(0, 25, 50, 75, 100)) +
   scale_x_continuous(breaks = c(0, log(5), log(25), log(50), log(100)),
                      labels = c(1, 5, 25, 50, 100)) +
@@ -103,7 +106,7 @@ f1(x_var_orig = vpd,
    x_var = vpd,
    x_seq = seq_range(m$data2$vpd, n = 100),
    exp_x = F,
-   veg_show = unique(m$data$cwhr_gp)) +
+   veg_show = veg_gps) +
   xlab("Vapor Preasure Deficit")
 
 ## ads mortality
@@ -111,7 +114,7 @@ f1(x_var_orig = ads_l,
    x_var = ads_mort,
    x_seq = seq_range(m$data2$ads_l, n = 100),
    exp_x = T,
-   veg_show = unique(m$data$cwhr_gp)) +
+   veg_show = veg_gps) +
   xlab("ADS Mortality")
 
 ## wind speed
@@ -119,7 +122,7 @@ f1(x_var_orig = windspd,
    x_var = windspd,
    x_seq = seq_range(m$data2$windspd, n = 100),
    exp_x = F,
-   veg_show = unique(m$data$cwhr_gp)) +
+   veg_show = veg_gps) +
   xlab("Wind Speed")
 
 ## fm1000
@@ -127,7 +130,7 @@ f1(x_var_orig = fm1000_l,
    x_var = fm1000,
    x_seq = seq_range(m$data2$fm1000_l, n = 100),
    exp_x = T,
-   veg_show = unique(m$data$cwhr_gp)) +
+   veg_show = veg_gps) +
   xlab("FM 1000")
   
   
