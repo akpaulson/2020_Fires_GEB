@@ -77,7 +77,7 @@ veg5 = filter(d, cwhr_gp %in% cwhr_keep) %>%
 ## Fit baseline fire model
 
 tic()
-bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + t2(x,y) +
+bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 +
                 (tslf + ads_mort + vpd + windspd + fm1000 | fire_na) +
                 (1 | cwhr_gp),
               family = bernoulli("logit"), 
@@ -85,7 +85,7 @@ bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + t2(x,y) +
               chains = 2, cores = 2,
               backend = "cmdstanr")
 toc()
-
+saveRDS(bm_fire, datadir("StatModels/bm_fire.rds"))
 
 # # Try to add conditional autoregressive (took too much memory and time to even prep the model for compiling)
 # bm_fire_car = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
@@ -108,17 +108,24 @@ resid = resid(bm_fire)
 veg5$resid = resid[,1]
 
 
+## pull in orig x and y
+veg5$x_noscale = filter(d, cwhr_gp %in% cwhr_keep) %>% pull(x)
+veg5$y_noscale = filter(d, cwhr_gp %in% cwhr_keep) %>% pull(y)
+
+
+
 ## get correllogram, by fire
 
 make_correllogram = function(fire_na_foc) {
   
+  # d_foc = veg5
   d_foc = veg5 %>%
     filter(fire_na == fire_na_foc)
   
   d_foc = d_foc %>%
     sample_n(min(500,nrow(d_foc)))
   
-  corr = spline.correlog(x = d_foc$x, y = d_foc$y, z = d_foc$resid, resamp = 1000, xmax = 20000)
+  corr = spline.correlog(x = d_foc$x_noscale, y = d_foc$y_noscale, z = d_foc$resid, resamp = 1000, xmax = 20000)
   #corr2 = correlog(x = d_foc$x, y = d_foc$y, z = d_foc$resid, increment=100, resamp = 1000)
   
   plot(corr)
@@ -140,6 +147,7 @@ fire_nas_foc = names(fire_nas_foc)
 
 plan(multisession, workers = 3)
 corr_df = future_map_dfr(fire_nas_foc ,make_correllogram, .options=future_options(scheduling=Inf))
+# corr_df = make_correllogram("blah")
 
 corr_df_plot = corr_df %>%
   filter(dist >= 0.9)
@@ -150,7 +158,7 @@ p = ggplot(corr_df_plot,aes(x = dist,y = bound_0.5)) +
   geom_ribbon(aes(ymin=bound_0.025, ymax = bound_0.975), alpha = 0.2) +
   geom_line() +
   facet_wrap(~fire) +
-  scale_y_continuous(limits = c(-1,1)) +
+  #scale_y_continuous(limits = c(-1,1)) +
   theme_bw() +
   labs(x = "Distance (km)", y = "Correlation (Moran's I)")
 p
