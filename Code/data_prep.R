@@ -31,7 +31,7 @@ grid_90_veg <- st_read("InProcessData/grid_90_veg_sev_eco.shp")
 
 #This dataset has all of the gridMET weather data attached to it, it was 
   # produced in the extract_gridMET.R code: 
-grid_90_gmet <- st_read("InProcessData/grid_90_grmt.shp")
+grid_90_gmet <- st_read("InProcessData/grid_90_grmt_bilinear_subsetvars.shp")
 
 #This dataset has all of the aerial detection survey mortality attached,
   # produced in the extract_mortality.R code: 
@@ -131,7 +131,7 @@ grid_90_cull %>%
 
 #### Save complete dataset ####
 
-st_write(grid_90_cull, "CleanData/grid_90_clean.shp")
+st_write(grid_90_cull, "CleanData/grid_90_clean_interpWeather.shp")
 
 
 

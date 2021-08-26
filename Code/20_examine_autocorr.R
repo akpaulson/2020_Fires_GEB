@@ -21,7 +21,7 @@ source(here("Code/00_shared_functions_and_globals.R")) # This defines the functi
 
 ## Read in subset of clean data
 #### eventually this will be the full dataset or thinned for spatial autocorr
-shp = read_sf(datadir("CleanData/grid_thinned_10.gpkg"))
+shp = read_sf(datadir("CleanData/grid_thinned_interpWeather_10.gpkg"))
 
 coords = st_coordinates(shp)
 shp$x = coords[,1]
@@ -34,6 +34,7 @@ d = st_drop_geometry(shp) %>%
 
 ## Scale variables (some we may want to transfor first (e.g., ads_mort))
 scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm))
+scale3 <- function(x, na.rm = TRUE) ((x - mean(x, na.rm = na.rm))/sd(x,na.rm=na.rm))
 # ds = mutate_at(d, .vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
 #                function(x) log(x + 0.01)) %>% 
 #   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
@@ -51,11 +52,13 @@ cwhr_keep = names(cwhr_count)[cwhr_count > thresh]
 # rf = filter(ds, cwhr_gp %in% c("Red fir"))
 # ypmc = filter(ds, cwhr_gp %in% c("Yellow pine", "Mixed conifer"))
 veg5 = filter(d, cwhr_gp %in% cwhr_keep) %>% 
-  mutate_at(.vars = c('tslf', 'ads_mort', 'bi', 'fm100', 'fm1000'), 
+  mutate_at(.vars = c('tslf', 'ads_mort', 'bi', 'fm1000'), 
             function(x) log(x + 0.01)) %>% 
   mutate_at(.vars = c('tslf', 'mcc_fri', 'bi', 'windspd', 'vpd', 
-                      'rhmax', 'rhmin', 'erc', 'fm100', 'fm1000', 'ads_mort'), 
-            scale2)
+                      'fm1000', 'ads_mort'), 
+            scale2) %>%
+  mutate_at(.vars = c('x','y'), 
+            scale3)
 
 ### Prep adjacency matrix for CAR model
 # grid = veg5[,c("x","y")]
@@ -74,7 +77,7 @@ veg5 = filter(d, cwhr_gp %in% cwhr_keep) %>%
 ## Fit baseline fire model
 
 tic()
-bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + 
+bm_fire = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 + t2(x,y) +
                 (tslf + ads_mort + vpd + windspd + fm1000 | fire_na) +
                 (1 | cwhr_gp),
               family = bernoulli("logit"), 

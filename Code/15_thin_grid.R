@@ -18,7 +18,7 @@ fire_perims = st_read(datadir("RawData/Historic_Fire_Perimeters/fire20_1.shp"))
 # EPSG 3310 CA Albers
 
 ## Load the point grid
-grid = st_read(datadir("CleanData/grid_90_clean"))
+grid = st_read(datadir("CleanData/grid_90_clean_interpWeather"))
 
 ## Reproject to the Cal Fire projection
 grid_proj = st_transform(grid,st_crs(fire_perims))
@@ -74,16 +74,16 @@ grid_fire_chunks = split(grid_proj,f=grid_proj$FIRE_NA)
 
 thinned_grid_list = map(.x = grid_fire_chunks, .f = thin_grid, thin_factor=2)
 grid_thinned = do.call("rbind",thinned_grid_list)
-st_write(grid_thinned,datadir("CleanData/grid_thinned_02.gpkg"))
+st_write(grid_thinned,datadir("CleanData/grid_thinned_interpWeather_02.gpkg"))
 
 thinned_grid_list = map(.x = grid_fire_chunks, .f = thin_grid, thin_factor=3)
 grid_thinned = do.call("rbind",thinned_grid_list)
-st_write(grid_thinned,datadir("CleanData/grid_thinned_03.gpkg"))
+st_write(grid_thinned,datadir("CleanData/grid_thinned_interpWeather_03.gpkg"))
 
 thinned_grid_list = map(.x = grid_fire_chunks, .f = thin_grid, thin_factor=5)
 grid_thinned = do.call("rbind",thinned_grid_list)
-st_write(grid_thinned,datadir("CleanData/grid_thinned_05.gpkg"))
+st_write(grid_thinned,datadir("CleanData/grid_thinned_interpWeather_05.gpkg"))
 
 thinned_grid_list = map(.x = grid_fire_chunks, .f = thin_grid, thin_factor=10)
 grid_thinned = do.call("rbind",thinned_grid_list)
-st_write(grid_thinned,datadir("CleanData/grid_thinned_10.gpkg"))
+st_write(grid_thinned,datadir("CleanData/grid_thinned_interpWeather_10.gpkg"))
