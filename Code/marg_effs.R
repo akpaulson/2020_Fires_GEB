@@ -8,9 +8,8 @@ library(tidybayes)
 library(brms)
 library(ggdist)
 library(modelr)
-
-#### Will try modifying so that color and CIs are only shown for a subset of veg types
-#### Grey mean curves will be shown for all veg types
+library(cowplot)
+library(patchwork)
 
 ## read in model
 m = read_rds("Models/bm_veg.rds")
@@ -24,9 +23,9 @@ m$data2 = mutate(m$data2,
             fm1000_l = log(fm1000 + 0.01))
 
 ## What is the median fire in terms of phs?
-mfire = read_csv("Results/sample_phs.csv") %>% 
-  filter(phs == median(phs)) %>% 
-  pull(fire_na)
+# mfire = read_csv("Results/sample_phs.csv") %>% 
+#   filter(phs == median(phs)) %>% 
+#   pull(fire_na)
 
 ## set up plotting function
 f1 <- function(x_var, #model variable
@@ -37,17 +36,17 @@ f1 <- function(x_var, #model variable
                ) {
   ## set up new data, gotta be an easier way to fill "typical" values
   newdata0 <- data.frame(tslf = 0, ads_mort = 0, vpd = 0, windspd = 0, fm1000 = 0,
-                         fire_na = mfire, #Using median fire in terms of phs
+                         # fire_na = mfire, #Using median fire in terms of phs
                          cwhr_gp = c({{veg_show}}, "new")) %>% 
     ## drop variable to be expanded below
     dplyr::select(-{{x_var}})
   
-  ## do the same for all veg types
-  # newdata0_all = data.frame(tslf = 0, ads_mort = 0, vpd = 0, windspd = 0, fm1000 = 0,
-  #                          fire_na = mfire,
-  #                          cwhr_gp = unique(m$data2$cwhr_gp)) %>% 
-  #   ## drop variable to be expanded below
-  #   dplyr::select(-{{x_var}})
+          ## do the same for all veg types
+          # newdata0_all = data.frame(tslf = 0, ads_mort = 0, vpd = 0, windspd = 0, fm1000 = 0,
+          #                          fire_na = mfire,
+          #                          cwhr_gp = unique(m$data2$cwhr_gp)) %>% 
+          #   ## drop variable to be expanded below
+          #   dplyr::select(-{{x_var}})
   
   ## get range of values for user-defined variable
   ## Note the use of "glue syntax" and "embracing" https://dplyr.tidyverse.org/articles/programming.html
@@ -65,25 +64,25 @@ f1 <- function(x_var, #model variable
   left_join(newdata0, by = "cwhr_gp") %>%
   ## Get fitted draws (expected predictions)
   add_epred_draws(m, ndraws = 500,
-                  #re_formula = NA,
+                  re_formula = ~ (tslf + ads_mort + vpd + windspd + fm1000 | cwhr_gp),
                   allow_new_levels = T) 
-  
-  ## for all
-  # newdata_all <- data_grid(m$data,
-  #                      .x_us = x_seq,
-  #                      cwhr_gp = unique(m$data2$cwhr_gp)) %>%
-  #   mutate({{x_var}} := (.x_us - d_sum$mn) / d_sum$sd) %>%
-  #   left_join(newdata0_all, by = "cwhr_gp") %>%
-  #   ## Get fitted draws (expected predictions)
-  #   add_epred_draws(m, ndraws = 100) %>% 
-  #   # group_by(cwhr_gp) %>% 
-  #   median_qi()
+          # 
+          #   # for all
+          #   newdata_all <- data_grid(m$data,
+          #                        .x_us = x_seq,
+          #                        cwhr_gp = unique(m$data2$cwhr_gp)) %>%
+          #     mutate({{x_var}} := (.x_us - d_sum$mn) / d_sum$sd) %>%
+          #     left_join(newdata0_all, by = "cwhr_gp") %>%
+          #     ## Get fitted draws (expected predictions)
+          #     add_epred_draws(m, ndraws = 100) %>%
+          #     # group_by(cwhr_gp) %>%
+          #     median_qi()
   
   if(exp_x == T) {
     newdata$.x_us = exp(newdata$.x_us)
     # newdata_all$.x_us = exp(newdata_all$.x_us)
   }
-  
+
   ggplot(newdata, aes(x = .x_us, y = .epred, color = cwhr_gp,
                           fill = cwhr_gp, group = cwhr_gp)) +
     # geom_line(data = newdata_all, inherit.aes = F,
@@ -119,7 +118,7 @@ p.b = f1(x_var_orig = ads_l,
   scale_x_continuous(breaks = c(-5, log(0.1), 0, log(10), log(100)),
                      labels = c(0, 0.25, 1, 10, 100)) +
   theme(axis.text.y = element_blank()) +
-  xlab("ADS Mortality")
+  xlab("Drought Mortality (TPA)")
 
 ## vpd
 p.c = f1(x_var_orig = vpd,
@@ -127,7 +126,7 @@ p.c = f1(x_var_orig = vpd,
    x_seq = seq_range(m$data2$vpd, n = 100),
    exp_x = F,
    veg_show = veg_gps) +
-  xlab("Vapor Preasure Deficit")
+  xlab("Vapor Pressure Deficit (kPa)")
 
 
 ## fm1000
@@ -137,7 +136,7 @@ p.d = f1(x_var_orig = fm1000_l,
          exp_x = T,
          veg_show = veg_gps) +
   theme(axis.text.y = element_blank()) +
-  xlab("FM 1000")
+  xlab("FM 1000 (%)")
 
 ## wind speed
 p.e = f1(x_var_orig = windspd,
@@ -145,7 +144,7 @@ p.e = f1(x_var_orig = windspd,
    x_seq = seq_range(m$data2$windspd, n = 100),
    exp_x = F,
    veg_show = veg_gps) +
-  xlab("Wind Speed")
+  xlab("Wind Speed (m/s)")
 
   
 
@@ -158,3 +157,18 @@ p = p.a + p.b +
 save_plot("Figures/Marg_VegEffects.png", p,
           base_width = 7, base_height = 7)
   
+
+library(DT)
+
+d = m$data2 %>% 
+  dplyr::select(cwhr_gp, tslf, windspd:ads_mort) %>% 
+  pivot_longer(cols = tslf:ads_mort, names_to = "term") %>% 
+  group_by(cwhr_gp, term) %>% 
+  summarise(mean = mean(value),
+            median = median(value),
+            .groups = "drop")
+
+arrange(d, median) %>% 
+  mutate_if(is.numeric, round, 2) %>% 
+  mutate(term = as.factor(term)) %>% 
+  datatable(filter = "top")

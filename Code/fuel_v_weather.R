@@ -294,6 +294,20 @@ save_plot("Figures/FireEffects.png", p,
 #           base_width = 8, base_height = 6)
 
 ## Table of median values
+library(DT)
+
+## read in model
+m = read_rds("Models/bm_fire.rds")
+
+## get median conditions of each fire
+d = m$data2 %>% 
+  dplyr::select(fire_na, tslf, windspd:ads_mort) %>% 
+  pivot_longer(cols = tslf:ads_mort, names_to = "term") %>% 
+  group_by(fire_na, term) %>% 
+  summarise(mean = mean(value),
+            median = median(value),
+            .groups = "drop")
+
 arrange(d, median) %>% 
   mutate_if(is.numeric, round, 2) %>% 
   mutate(term = as.factor(term)) %>% 
