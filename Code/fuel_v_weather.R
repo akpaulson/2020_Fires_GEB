@@ -98,6 +98,14 @@ d3 = merge(re_fire, d) %>%
          flab = ifelse(sig == 1, fire_na, ""))
 # d3$fire_na = factor(d3$fire_na, unique(d3$fire_na))
 
+## Simplify for Hugh
+d.out = dplyr::select(d3, fire = fire_na, ha, phs, term, lab, rank, median = ep_median, 
+                      lower95 = .lower, upper95 = .upper) %>% 
+  mutate_at(vars(median, lower95, upper95), exp) %>% 
+  mutate_if(is.numeric, round, 3)
+
+write_csv(d.out, 'Results/fires_oddsratio.csv')
+
 ## find fires to label
 ## ggrepel doesn't seem to work with dodge
 filter(d3, term == 'windspd') %>% 
