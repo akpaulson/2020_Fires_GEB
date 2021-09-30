@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+\local
 *.Rproj
 InProcessData/*.tif
 InProcessData/*.tif.ovr

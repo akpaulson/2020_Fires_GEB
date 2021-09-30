@@ -1,0 +1,386 @@
+fire,ha,phs,term,lab,rank,median,lower95,upper95
+SLATER,63709.717,0.608,ads_mort,"Drought
+Mortality",1,0.912,0.788,1.018
+LOYALTON,18907.294,0.818,ads_mort,"Drought
+Mortality",2,0.941,0.804,1.051
+W-5 COLD SPRINGS,34324.374,0.768,ads_mort,"Drought
+Mortality",3,0.948,0.823,1.053
+STAGECOACH,3136.575,0.737,ads_mort,"Drought
+Mortality",4,0.954,0.574,1.465
+APPLE,13439.339,0.831,ads_mort,"Drought
+Mortality",5,0.96,0.82,1.085
+RATTLESNAKE,3408.605,0.2,ads_mort,"Drought
+Mortality",6,0.964,0.801,1.104
+ZOGG,22799.24,0.651,ads_mort,"Drought
+Mortality",7,0.978,0.843,1.106
+NORTH COMPLEX,129004.589,0.544,ads_mort,"Drought
+Mortality",8,0.983,0.925,1.041
+NORTH,2785.158,0.75,ads_mort,"Drought
+Mortality",9,0.987,0.847,1.14
+SHEEP,11954.87,0.389,ads_mort,"Drought
+Mortality",10,0.989,0.878,1.094
+LAKE,12545.023,0.827,ads_mort,"Drought
+Mortality",11,0.99,0.887,1.113
+BLUE RIDGE,5541.972,0.817,ads_mort,"Drought
+Mortality",12,0.996,0.855,1.179
+HOG,3871.372,0.383,ads_mort,"Drought
+Mortality",13,0.997,0.864,1.125
+CALDWELL,32870.378,0.602,ads_mort,"Drought
+Mortality",14,0.999,0.859,1.161
+SILVERADO,5046.111,0.792,ads_mort,"Drought
+Mortality",15,1.003,0.868,1.205
+VALLEY,6632.601,0.863,ads_mort,"Drought
+Mortality",16,1.008,0.885,1.182
+BOBCAT,46942.767,0.569,ads_mort,"Drought
+Mortality",17,1.009,0.916,1.13
+MINERAL,12005.82,0.333,ads_mort,"Drought
+Mortality",18,1.009,0.888,1.165
+DOLAN,50394.334,0.543,ads_mort,"Drought
+Mortality",19,1.015,0.941,1.111
+CARMEL,2831.564,0.424,ads_mort,"Drought
+Mortality",20,1.015,0.897,1.185
+DEVIL,3590.346,0.214,ads_mort,"Drought
+Mortality",21,1.016,0.891,1.193
+GLASS,27309.951,0.329,ads_mort,"Drought
+Mortality",22,1.018,0.903,1.162
+AUGUST COMPLEX FIRES,417919.232,0.373,ads_mort,"Drought
+Mortality",23,1.019,0.985,1.057
+GOLD,9167.19,0.212,ads_mort,"Drought
+Mortality",24,1.021,0.915,1.161
+HENNESSEY,123571.679,0.395,ads_mort,"Drought
+Mortality",25,1.035,0.949,1.155
+SNOW,2530.68,0.633,ads_mort,"Drought
+Mortality",26,1.035,0.889,1.287
+SCU COMPLEX,160417.126,0.431,ads_mort,"Drought
+Mortality",27,1.045,0.96,1.189
+RIVER,20320.822,0.545,ads_mort,"Drought
+Mortality",28,1.045,0.938,1.211
+RED SALMON COMPLEX,58208.415,0.22,ads_mort,"Drought
+Mortality",29,1.045,0.968,1.155
+BLUEJAY,2801.232,0.152,ads_mort,"Drought
+Mortality",30,1.047,0.923,1.271
+WALLBRIDGE,22342.269,0.192,ads_mort,"Drought
+Mortality",31,1.052,0.953,1.239
+SLINK,10826.038,0.631,ads_mort,"Drought
+Mortality",32,1.11,0.971,1.367
+CZU LIGHTNING COMPLEX,35026.99,0.37,ads_mort,"Drought
+Mortality",33,1.162,0.967,1.533
+CREEK,153732.927,0.409,ads_mort,"Drought
+Mortality",34,1.208,0.995,1.482
+CASTLE,69058.857,0.378,ads_mort,"Drought
+Mortality",35,1.314,1.021,1.697
+CALDWELL,32870.378,0.602,fm1000,"1000 hr
+Fuels",1,0.178,0.06,0.497
+SNOW,2530.68,0.633,fm1000,"1000 hr
+Fuels",2,0.243,0.026,1.852
+CASTLE,69058.857,0.378,fm1000,"1000 hr
+Fuels",3,0.406,0.243,0.665
+BOBCAT,46942.767,0.569,fm1000,"1000 hr
+Fuels",4,0.462,0.274,0.763
+WALLBRIDGE,22342.269,0.192,fm1000,"1000 hr
+Fuels",5,0.612,0.149,2.79
+CREEK,153732.927,0.409,fm1000,"1000 hr
+Fuels",6,0.662,0.486,0.915
+CARMEL,2831.564,0.424,fm1000,"1000 hr
+Fuels",7,0.682,0.125,3.913
+RED SALMON COMPLEX,58208.415,0.22,fm1000,"1000 hr
+Fuels",8,0.709,0.592,0.835
+VALLEY,6632.601,0.863,fm1000,"1000 hr
+Fuels",9,0.719,0.248,1.716
+HENNESSEY,123571.679,0.395,fm1000,"1000 hr
+Fuels",10,0.818,0.692,0.967
+CZU LIGHTNING COMPLEX,35026.99,0.37,fm1000,"1000 hr
+Fuels",11,0.893,0.298,2.408
+GLASS,27309.951,0.329,fm1000,"1000 hr
+Fuels",12,0.959,0.306,3.807
+SLATER,63709.717,0.608,fm1000,"1000 hr
+Fuels",13,0.98,0.962,0.996
+DOLAN,50394.334,0.543,fm1000,"1000 hr
+Fuels",14,0.985,0.938,1.032
+SHEEP,11954.87,0.389,fm1000,"1000 hr
+Fuels",15,0.986,0.949,1.018
+SLINK,10826.038,0.631,fm1000,"1000 hr
+Fuels",16,0.991,0.385,2.187
+APPLE,13439.339,0.831,fm1000,"1000 hr
+Fuels",17,0.998,0.426,2.27
+BLUEJAY,2801.232,0.152,fm1000,"1000 hr
+Fuels",18,1.003,0.693,1.467
+GOLD,9167.19,0.212,fm1000,"1000 hr
+Fuels",19,1.004,0.457,2.333
+LOYALTON,18907.294,0.818,fm1000,"1000 hr
+Fuels",20,1.005,0.992,1.022
+MINERAL,12005.82,0.333,fm1000,"1000 hr
+Fuels",21,1.006,0.713,1.412
+HOG,3871.372,0.383,fm1000,"1000 hr
+Fuels",22,1.016,0.711,1.419
+NORTH,2785.158,0.75,fm1000,"1000 hr
+Fuels",23,1.021,0.773,1.369
+SCU COMPLEX,160417.126,0.431,fm1000,"1000 hr
+Fuels",24,1.025,1.006,1.045
+AUGUST COMPLEX FIRES,417919.232,0.373,fm1000,"1000 hr
+Fuels",25,1.028,1.018,1.038
+STAGECOACH,3136.575,0.737,fm1000,"1000 hr
+Fuels",26,1.03,0.337,3.065
+DEVIL,3590.346,0.214,fm1000,"1000 hr
+Fuels",27,1.081,0.808,1.475
+LAKE,12545.023,0.827,fm1000,"1000 hr
+Fuels",28,1.096,0.396,3.087
+ZOGG,22799.24,0.651,fm1000,"1000 hr
+Fuels",29,1.123,0.866,1.522
+RIVER,20320.822,0.545,fm1000,"1000 hr
+Fuels",30,1.26,0.993,1.609
+W-5 COLD SPRINGS,34324.374,0.768,fm1000,"1000 hr
+Fuels",31,1.728,0.785,4.875
+RATTLESNAKE,3408.605,0.2,fm1000,"1000 hr
+Fuels",32,1.795,0.378,10.929
+BLUE RIDGE,5541.972,0.817,fm1000,"1000 hr
+Fuels",33,1.81,0.252,14.019
+NORTH COMPLEX,129004.589,0.544,fm1000,"1000 hr
+Fuels",34,1.991,1.401,2.84
+SILVERADO,5046.111,0.792,fm1000,"1000 hr
+Fuels",35,2.542,0.295,26.639
+CZU LIGHTNING COMPLEX,35026.99,0.37,tslf,"Time Since
+Last Fire",1,0.677,0.535,0.855
+DEVIL,3590.346,0.214,tslf,"Time Since
+Last Fire",2,0.71,0.261,1.892
+BLUE RIDGE,5541.972,0.817,tslf,"Time Since
+Last Fire",3,0.779,0.369,1.668
+SLINK,10826.038,0.631,tslf,"Time Since
+Last Fire",4,0.794,0.53,1.069
+HENNESSEY,123571.679,0.395,tslf,"Time Since
+Last Fire",5,0.822,0.766,0.88
+SILVERADO,5046.111,0.792,tslf,"Time Since
+Last Fire",6,0.823,0.382,1.794
+DOLAN,50394.334,0.543,tslf,"Time Since
+Last Fire",7,0.878,0.704,1.088
+BLUEJAY,2801.232,0.152,tslf,"Time Since
+Last Fire",8,0.962,0.665,1.333
+BOBCAT,46942.767,0.569,tslf,"Time Since
+Last Fire",9,0.975,0.923,1.024
+SNOW,2530.68,0.633,tslf,"Time Since
+Last Fire",10,0.976,0.76,1.259
+RED SALMON COMPLEX,58208.415,0.22,tslf,"Time Since
+Last Fire",11,0.982,0.803,1.232
+VALLEY,6632.601,0.863,tslf,"Time Since
+Last Fire",12,0.987,0.957,1.015
+RIVER,20320.822,0.545,tslf,"Time Since
+Last Fire",13,1.026,0.726,1.462
+SHEEP,11954.87,0.389,tslf,"Time Since
+Last Fire",14,1.036,0.812,1.307
+WALLBRIDGE,22342.269,0.192,tslf,"Time Since
+Last Fire",15,1.073,0.747,1.547
+CARMEL,2831.564,0.424,tslf,"Time Since
+Last Fire",16,1.088,0.752,1.579
+GOLD,9167.19,0.212,tslf,"Time Since
+Last Fire",17,1.088,0.743,1.527
+STAGECOACH,3136.575,0.737,tslf,"Time Since
+Last Fire",18,1.089,0.742,1.533
+CREEK,153732.927,0.409,tslf,"Time Since
+Last Fire",19,1.108,1.009,1.218
+APPLE,13439.339,0.831,tslf,"Time Since
+Last Fire",20,1.109,1,1.234
+ZOGG,22799.24,0.651,tslf,"Time Since
+Last Fire",21,1.111,0.975,1.275
+SCU COMPLEX,160417.126,0.431,tslf,"Time Since
+Last Fire",22,1.117,1.042,1.205
+HOG,3871.372,0.383,tslf,"Time Since
+Last Fire",23,1.13,0.807,1.61
+CALDWELL,32870.378,0.602,tslf,"Time Since
+Last Fire",24,1.157,0.982,1.366
+NORTH COMPLEX,129004.589,0.544,tslf,"Time Since
+Last Fire",25,1.168,1.084,1.262
+LAKE,12545.023,0.827,tslf,"Time Since
+Last Fire",26,1.182,0.957,1.474
+NORTH,2785.158,0.75,tslf,"Time Since
+Last Fire",27,1.194,0.821,1.772
+AUGUST COMPLEX FIRES,417919.232,0.373,tslf,"Time Since
+Last Fire",28,1.217,1.156,1.284
+W-5 COLD SPRINGS,34324.374,0.768,tslf,"Time Since
+Last Fire",29,1.217,0.888,1.686
+GLASS,27309.951,0.329,tslf,"Time Since
+Last Fire",30,1.223,1.037,1.462
+MINERAL,12005.82,0.333,tslf,"Time Since
+Last Fire",31,1.304,1.093,1.581
+RATTLESNAKE,3408.605,0.2,tslf,"Time Since
+Last Fire",32,1.319,0.897,2.027
+CASTLE,69058.857,0.378,tslf,"Time Since
+Last Fire",33,1.344,1.208,1.507
+LOYALTON,18907.294,0.818,tslf,"Time Since
+Last Fire",34,1.403,1.087,1.844
+SLATER,63709.717,0.608,tslf,"Time Since
+Last Fire",35,1.551,1.372,1.773
+RATTLESNAKE,3408.605,0.2,vpd,"Vapor
+Pressure
+Deficit",1,0.268,0.077,0.758
+CREEK,153732.927,0.409,vpd,"Vapor
+Pressure
+Deficit",2,0.512,0.463,0.563
+WALLBRIDGE,22342.269,0.192,vpd,"Vapor
+Pressure
+Deficit",3,0.666,0.48,0.912
+DEVIL,3590.346,0.214,vpd,"Vapor
+Pressure
+Deficit",4,0.672,0.43,1.012
+SILVERADO,5046.111,0.792,vpd,"Vapor
+Pressure
+Deficit",5,0.677,0.151,2.933
+SHEEP,11954.87,0.389,vpd,"Vapor
+Pressure
+Deficit",6,0.679,0.491,0.914
+BLUEJAY,2801.232,0.152,vpd,"Vapor
+Pressure
+Deficit",7,0.728,0.234,2.323
+W-5 COLD SPRINGS,34324.374,0.768,vpd,"Vapor
+Pressure
+Deficit",8,0.737,0.535,0.996
+RED SALMON COMPLEX,58208.415,0.22,vpd,"Vapor
+Pressure
+Deficit",9,0.826,0.758,0.897
+AUGUST COMPLEX FIRES,417919.232,0.373,vpd,"Vapor
+Pressure
+Deficit",10,0.86,0.832,0.893
+CASTLE,69058.857,0.378,vpd,"Vapor
+Pressure
+Deficit",11,0.875,0.766,1
+BLUE RIDGE,5541.972,0.817,vpd,"Vapor
+Pressure
+Deficit",12,0.902,0.553,1.544
+CARMEL,2831.564,0.424,vpd,"Vapor
+Pressure
+Deficit",13,0.936,0.86,1.012
+DOLAN,50394.334,0.543,vpd,"Vapor
+Pressure
+Deficit",14,0.951,0.925,0.979
+STAGECOACH,3136.575,0.737,vpd,"Vapor
+Pressure
+Deficit",15,0.968,0.746,1.303
+CZU LIGHTNING COMPLEX,35026.99,0.37,vpd,"Vapor
+Pressure
+Deficit",16,0.991,0.868,1.155
+RIVER,20320.822,0.545,vpd,"Vapor
+Pressure
+Deficit",17,1.001,0.945,1.06
+GOLD,9167.19,0.212,vpd,"Vapor
+Pressure
+Deficit",18,1.024,0.991,1.059
+LOYALTON,18907.294,0.818,vpd,"Vapor
+Pressure
+Deficit",19,1.031,1.009,1.056
+BOBCAT,46942.767,0.569,vpd,"Vapor
+Pressure
+Deficit",20,1.037,1,1.081
+SNOW,2530.68,0.633,vpd,"Vapor
+Pressure
+Deficit",21,1.049,0.197,5.712
+CALDWELL,32870.378,0.602,vpd,"Vapor
+Pressure
+Deficit",22,1.054,0.627,1.856
+APPLE,13439.339,0.831,vpd,"Vapor
+Pressure
+Deficit",23,1.062,0.984,1.142
+HOG,3871.372,0.383,vpd,"Vapor
+Pressure
+Deficit",24,1.075,0.913,1.273
+NORTH,2785.158,0.75,vpd,"Vapor
+Pressure
+Deficit",25,1.078,0.926,1.268
+NORTH COMPLEX,129004.589,0.544,vpd,"Vapor
+Pressure
+Deficit",26,1.082,1.066,1.102
+ZOGG,22799.24,0.651,vpd,"Vapor
+Pressure
+Deficit",27,1.1,0.469,2.383
+SCU COMPLEX,160417.126,0.431,vpd,"Vapor
+Pressure
+Deficit",28,1.166,1.034,1.318
+MINERAL,12005.82,0.333,vpd,"Vapor
+Pressure
+Deficit",29,1.26,0.816,1.913
+SLATER,63709.717,0.608,vpd,"Vapor
+Pressure
+Deficit",30,1.582,1.436,1.757
+SLINK,10826.038,0.631,vpd,"Vapor
+Pressure
+Deficit",31,1.804,0.826,4.262
+HENNESSEY,123571.679,0.395,vpd,"Vapor
+Pressure
+Deficit",32,1.944,1.577,2.4
+LAKE,12545.023,0.827,vpd,"Vapor
+Pressure
+Deficit",33,2.09,0.799,5.433
+VALLEY,6632.601,0.863,vpd,"Vapor
+Pressure
+Deficit",34,2.097,0.339,11.578
+GLASS,27309.951,0.329,vpd,"Vapor
+Pressure
+Deficit",35,2.195,1.183,4.458
+RATTLESNAKE,3408.605,0.2,windspd,"Wind
+Speed",1,0.56,0.183,1.744
+ZOGG,22799.24,0.651,windspd,"Wind
+Speed",2,0.609,0.37,0.926
+CASTLE,69058.857,0.378,windspd,"Wind
+Speed",3,0.721,0.607,0.846
+DEVIL,3590.346,0.214,windspd,"Wind
+Speed",4,0.735,0.459,1.184
+GOLD,9167.19,0.212,windspd,"Wind
+Speed",5,0.747,0.379,1.679
+LAKE,12545.023,0.827,windspd,"Wind
+Speed",6,0.805,0.506,1.271
+MINERAL,12005.82,0.333,windspd,"Wind
+Speed",7,0.861,0.735,1
+AUGUST COMPLEX FIRES,417919.232,0.373,windspd,"Wind
+Speed",8,0.869,0.837,0.902
+BLUEJAY,2801.232,0.152,windspd,"Wind
+Speed",9,0.889,0.719,1.08
+RED SALMON COMPLEX,58208.415,0.22,windspd,"Wind
+Speed",10,0.899,0.84,0.958
+NORTH,2785.158,0.75,windspd,"Wind
+Speed",11,0.911,0.643,1.296
+HOG,3871.372,0.383,windspd,"Wind
+Speed",12,0.923,0.769,1.111
+CALDWELL,32870.378,0.602,windspd,"Wind
+Speed",13,0.93,0.691,1.247
+APPLE,13439.339,0.831,windspd,"Wind
+Speed",14,0.938,0.71,1.193
+GLASS,27309.951,0.329,windspd,"Wind
+Speed",15,0.964,0.893,1.048
+LOYALTON,18907.294,0.818,windspd,"Wind
+Speed",16,0.966,0.802,1.128
+CREEK,153732.927,0.409,windspd,"Wind
+Speed",17,0.974,0.934,1.019
+BOBCAT,46942.767,0.569,windspd,"Wind
+Speed",18,0.978,0.963,0.991
+W-5 COLD SPRINGS,34324.374,0.768,windspd,"Wind
+Speed",19,0.978,0.921,1.037
+SLINK,10826.038,0.631,windspd,"Wind
+Speed",20,0.998,0.765,1.31
+RIVER,20320.822,0.545,windspd,"Wind
+Speed",21,1.001,0.369,2.597
+BLUE RIDGE,5541.972,0.817,windspd,"Wind
+Speed",22,1.02,0.35,2.987
+SILVERADO,5046.111,0.792,windspd,"Wind
+Speed",23,1.052,0.776,1.431
+VALLEY,6632.601,0.863,windspd,"Wind
+Speed",24,1.081,0.428,3.358
+HENNESSEY,123571.679,0.395,windspd,"Wind
+Speed",25,1.084,1.028,1.143
+SCU COMPLEX,160417.126,0.431,windspd,"Wind
+Speed",26,1.116,0.825,1.503
+DOLAN,50394.334,0.543,windspd,"Wind
+Speed",27,1.135,1.042,1.242
+SLATER,63709.717,0.608,windspd,"Wind
+Speed",28,1.157,1.113,1.206
+STAGECOACH,3136.575,0.737,windspd,"Wind
+Speed",29,1.217,0.531,2.85
+SNOW,2530.68,0.633,windspd,"Wind
+Speed",30,1.309,0.434,4.218
+SHEEP,11954.87,0.389,windspd,"Wind
+Speed",31,1.368,1.057,1.832
+WALLBRIDGE,22342.269,0.192,windspd,"Wind
+Speed",32,1.613,0.456,5.659
+NORTH COMPLEX,129004.589,0.544,windspd,"Wind
+Speed",33,1.702,1.57,1.857
+CARMEL,2831.564,0.424,windspd,"Wind
+Speed",34,4.892,0.657,54.441
+CZU LIGHTNING COMPLEX,35026.99,0.37,windspd,"Wind
+Speed",35,158.845,22.038,1662.351

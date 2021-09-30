@@ -17,7 +17,7 @@ library(stringr)
 library(sf)
 
 # Set Geospatial Data Directory (wherever you saved raw data downloaded from Box): 
-geo_dir <- "../Geospatial_Data/"
+geo_dir <- "RawData/GeoData/"
 
 #Increase memory allocation: 
 
@@ -175,7 +175,7 @@ grid_90_proj <- st_transform(grid_90, proj4string(bi))
 rm(grid_90) #remove to save mem
 
 #Extract burning index values for each grid_90 point, output as matrix: 
-bi_extract <- raster::extract(bi_ca, grid_90_proj)
+bi_extract <- raster::extract(bi_ca, grid_90_proj, method="bilinear")
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
   # for each grid point) and 366 columns (one column for each day
@@ -258,7 +258,7 @@ plot(vs_ca[[305]])
 
 #Extract burning index values for each grid_90 point (projection
   # already matched to gridMET data above), output as matrix: 
-vs_extract <- raster::extract(vs_ca, grid_90_proj)
+vs_extract <- raster::extract(vs_ca, grid_90_proj, method="bilinear")
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -338,7 +338,7 @@ plot(vpd_ca[[305]])
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-vpd_extract <- raster::extract(vpd_ca, grid_90_proj)
+vpd_extract <- raster::extract(vpd_ca, grid_90_proj, method="bilinear")
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -669,7 +669,7 @@ plot(fm1000_ca[[305]])
 
 #Extract burning index values for each grid_90 point (projection
 # already matched to gridMET data above), output as matrix: 
-fm1000_extract <- raster::extract(fm1000_ca, grid_90_proj)
+fm1000_extract <- raster::extract(fm1000_ca, grid_90_proj,method="bilinear")
 
 #Since the extracted data is a matrix with 2,019,660 rows (one row
 # for each grid point) and 366 columns (one column for each day
@@ -718,13 +718,13 @@ grid_90_proj <- grid_90_proj %>%
   rename(bi = burning_index, 
          windspd = wind_speed_m_per_s, 
          vpd = mean_vapor_pressure_deficit_kpa, 
-         rhmax = relative_humidity_max_perc, 
-         rhmin = relative_humidity_min_perc, 
-         erc = energy_release_component, 
-         fm100 = dead_fuel_moisture_100hr, 
+         #rhmax = relative_humidity_max_perc, 
+         #rhmin = relative_humidity_min_perc, 
+         #erc = energy_release_component, 
+         #fm100 = dead_fuel_moisture_100hr, 
          fm1000 = dead_fuel_moisture_1000hr)
 
 slice_sample(grid_90_proj, n = 10)
 
 
-st_write(grid_90_proj, "InProcessData/grid_90_grmt.shp")
+st_write(grid_90_proj, "InProcessData/grid_90_grmt_bilinear_subsetvars.shp")
