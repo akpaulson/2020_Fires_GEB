@@ -13,7 +13,6 @@ library(cowplot)
 m = read_rds("Models/bm_veg.rds")
 
 ## summarise fixed effects
-## Will eventually want to do this for all veg types as well
 fe_ests = m %>% 
   gather_draws(pars = `^b_.*`, regex = T) %>% 
   # gather_draws(b_Intercept, b_tslf, b_ads_mort, b_vpd, b_windspd) %>% 

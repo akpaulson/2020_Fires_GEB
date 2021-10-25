@@ -1,0 +1,33 @@
+---
+title: "Paperfacts"
+output: html_notebook
+---
+
+```{r setup, include = F}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE, echo = F)
+```
+
+```{r}
+library(tidyverse)
+library(brms)
+
+## read in model
+m = read_rds("../Models/bm_fire.rds")
+
+## get median conditions of each fire
+d = m$data
+d2 = m$data2
+
+filter(d, fire_na %in% c('ZOGG', 'CZU LIGHTNING COMPLEX', 
+                         'AUGUST COMPLEX FIRES', 'NORTH COMPLEX')) %>% 
+  ggplot(aes(x = factor(rdnbr_h), y = fm1000)) +
+  facet_grid(cols = vars(fire_na)) +
+  geom_boxplot()
+
+group_by(d2, fire_na) %>% 
+  summarise(mn = mean(fm1000)) %>% 
+  arrange(mn)
+```
+
+
+

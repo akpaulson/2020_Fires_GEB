@@ -63,18 +63,27 @@ re_fire = merge(fe, r_fire) %>%
          fire_na = str_replace_all(fire_na, pattern = "[.]", replacement = " ")) %>% 
   dplyr::select(term, fire_na, f_value)
 
+## calculate raw parameter estimates for each fire
+re_fire2 = group_by(re_fire, term, fire_na) %>% 
+  median_qi(f_value, .width = .9)
+
+write_csv(re_fire2, 'FixedEsts_fires.csv')
+
 ## put together and get distribution of median marginal effect
 d2 = merge(re_fire, d) %>% 
   group_by(term, fire_na) %>% 
-  median_qi(ep_median = f_value * median) %>% 
+  median_qi(ep_median = f_value * median, .width = .9) %>% 
   pivot_wider(id_cols = c(fire_na), names_from = term, 
               values_from = c(ep_median, .lower, .upper))
   # mutate(tslf_windspd = exp(ep_median_tslf) / exp(ep_median_windspd))
 
+## just pull median values for Hugh
+d2.med = dplyr::select(d2, fire_na:ep_median_windspd)
+
 ## Keep it long for univariate comparisons
 d3 = merge(re_fire, d) %>% 
   group_by(term, fire_na) %>% 
-  median_qi(ep_median = f_value * median) %>% 
+  median_qi(ep_median = f_value * median, .width = .9) %>% 
   merge(da) %>% 
   merge(sev2) %>%
   arrange(ha) %>% 
@@ -105,15 +114,6 @@ d.out = dplyr::select(d3, fire = fire_na, ha, phs, term, lab, rank, median = ep_
   mutate_if(is.numeric, round, 3)
 
 write_csv(d.out, 'Results/fires_oddsratio.csv')
-
-## find fires to label
-## ggrepel doesn't seem to work with dodge
-filter(d3, term == 'windspd') %>% 
-  arrange(ep_median) %>% 
-  tail
-filter(d3, term == "vpd") %>% 
-  arrange(ep_median) %>% 
-  tail
 
 ## Build facets individually
 f1 = function(pdat) {
@@ -192,6 +192,9 @@ p = p.a + p.b +
 save_plot("Figures/FireEffects.png", p,
           base_width = 9, base_height = 7)
 
+library(DT)
+mutate_if(d3, is.numeric, round, 4) %>% 
+  datatable(filter = "top")
 
 # pw = filter(d3, term %in% c('windspd', 'vpd', 'fm1000')) %>% 
 #   ggplot(aes(y = lab, x = ep_median, 

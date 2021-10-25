@@ -98,7 +98,7 @@ f1 <- function(x_var, #model variable
 }
 
 veg_gps = c("Mixed conifer", "Douglas-fir", "Lowland chaparral", 
-            "Oak woodland", "Grassland and meadow")
+            "Oak woodland", "Yellow pine")
 ## TSLF
 p.a = f1(x_var_orig = tslf_l,
    x_var = tslf,
