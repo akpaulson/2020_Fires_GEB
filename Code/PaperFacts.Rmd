@@ -14,6 +14,14 @@ library(brms)
 ## read in model
 m = read_rds("../Models/bm_fire.rds")
 
+## just fixed effects
+fe = fixef(m) %>% 
+  as.data.frame() %>% 
+  mutate_all(round, 2) %>% 
+  rownames_to_column(var = 'Parameter')
+
+write_csv(fe, '../Results/PopEsts_fires.csv')
+
 ## get median conditions of each fire
 d = m$data
 d2 = m$data2
