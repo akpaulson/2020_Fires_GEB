@@ -1,0 +1,366 @@
+---
+title: "Compare RAVG vs. GEE Fire Severity Estimates"
+author: "Ali Paulson"
+date: "2/8/2022"
+output: html_document
+---
+
+
+We were not able to get fire severity estimates from RAVG for all of the 2020 fires that were part of the Global Ecology and Biogeography manuscript. Ali used Google Earth Engine (based on Sean Parks's code) to develop initial fire severity estimates for each missing fire.  
+
+*Question*: How well do the initial fire severity estimates from Google Earth Engine align with initial severity estimates from RAVG? [Zack Steel already did a similar assessment of extended fire severity estimates from GEE vs. Miller's severity products, and found a very close correspondence]
+
+*Methods*: RAVG data were available for 18 of the 40 fires we considered for the GEB manuscript. I ran these same 18 fires using an adjusted version of Sean Parks's code to obtain initial estimates of RdNBR fire severity. 
+
+- I used a date range of 10/1/2020 through 12/7/2020 for imagery for each of the 18 fires. For the fires used in the manuscript (and those provided to UFSS R5 Ecology program for the POSCRPT analysis), I investigated each individual fire to determine an appropriate date range for imagery. This was especially important for very late-season fires, where only November/December imagery should have been used. Thus, the date range used here may not be perfect. 
+- I then calculated the percent of each fire that was classified (based on Lydersen et al. 2018) as high severity using RAVG vs. GEE. 
+- I also used bilinear interpolation to extract the RdNBR severity estimate for each point on a 90m grid across each fire. I followed Lydersen et al. 2018 to classify each estimate as unchanged, low, moderate, or high severity. I then used a confusion matrix to assess the correspondence between each method for a) all severity classes and b) high severity classification. 
+
+*Results*: There is a strong correlation between the percent area estimated to have burned at high severity across these 18 fires for the GEE and RAVG methods (r=0.94). When assessing the classification on a point-by-point basis, the two methods correspond well for the high severity classification, but do not correspond as well when comparing the unchanged, low, moderate, and high severity classes.  Nevertheless, there is still 78% accuracy across the four classes, which is pretty good, and is in line or better than other estimates like this.  
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, include = FALSE)
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(raster)
+library(units)
+library(caret)
+
+#### Function to extract and re-class severity within the fire perimeter:####
+
+sev_extract <- function(severity_raster, fire) {
+  #1. Crop and mask Severity layer
+  sev_inside <- crop(severity_raster, fire)
+  sev_inside <- mask(sev_inside, fire)
+  
+  #Save data frame of raster for later processing, severity classification
+   # based on initial RdNBR estimates, from Table 2 in Lydersen 2018: 
+  sev_inside_df <- as.data.frame(sev_inside, xy=TRUE) %>% 
+    rename(ravg =3) %>%
+    filter(!is.na(ravg)) %>% 
+    mutate(ravg_reclass = case_when(
+      ravg < 79 ~ "Unchanged", 
+      ravg >= 79 & ravg <360 ~ "Low", 
+      ravg >= 360 & ravg <732 ~ "Moderate", 
+      ravg >= 732~ "High", 
+      TRUE ~ NA_character_)) %>% 
+    mutate(ravg_reclass_combo = case_when(
+      ravg < 360 ~ "Unchanged/Low", 
+      ravg >= 360 & ravg <732 ~ "Moderate", 
+      ravg >= 732~ "High", 
+      TRUE ~ NA_character_)) %>% 
+    mutate(ravg_reclass = factor(ravg_reclass, 
+                                 levels = c("Unchanged", "Low", "Moderate", "High"))) %>% 
+    mutate(ravg_reclass_combo = factor(ravg_reclass_combo, 
+                                       levels = c("Unchanged/Low", "Moderate", "High")))
+  return(sev_inside_df)
+}  
+
+```
+
+```{r data}
+#90-m grid: 
+grid_90 <- st_read("../InProcessData/grid_90m_40fires.shp")
+
+#Fire perimeters
+perim <- read_sf("../InProcessData/perim_2020_ravg.shp")
+
+#remove points from grid 90 that are in other fires not considered here: 
+grid_90_reduce <- grid_90 %>% 
+  filter(FIRE_NAME %in% perim$FIRE_NAME)
+
+rm(grid_90)
+
+#RAVG severity estimates:
+sev_ravg <- raster("../InProcessData/ravg_allfires_2020_RdNBR.tif")
+proj4string(sev_ravg)
+
+#GEE severity estimates of the same fires: 
+sev_gee <- raster("../InProcessData/ravg_fires_run_with_gee_2020_dNBR.tif")
+
+
+
+# check projections: 
+
+#RAVG severity and GEE severity...these are not the same projection. Since 
+  #raster re-projection is a mess, I think I will just have to process the 
+  # data separately - changing the projection of grid 90 and perim for each 
+  # individual raster. 
+proj4string(sev_ravg) == proj4string(sev_gee)
+
+#RAVG Severity and Grid: 
+st_crs(grid_90_reduce)[1] == proj4string(sev_ravg)#no
+grid_90_reduce <- st_transform(grid_90_reduce, crs = proj4string(sev_ravg))
+st_crs(grid_90_reduce)[1] == proj4string(sev_ravg)
+
+
+#RAVG Severity and perimeters: 
+st_crs(perim)[1] == proj4string(sev_gee) #no
+perim2 <- st_transform(perim, crs = proj4string(sev_ravg))
+st_crs(perim2)[1] == proj4string(sev_ravg)
+
+
+
+```
+
+
+```{r calc fire area}
+
+
+#What is the area of each fire? 
+# Calculate treatment area for each polygon: 
+perim3 <- perim2 %>% 
+  mutate(burn_area_m2 = st_area(.),
+         burn_area_ha = burn_area_m2 * 0.0001, 
+         burn_area_acre = burn_area_ha * 2.47105381) %>%
+  #remove units from fire_area_ha so that I can filter it
+  mutate(burn_area_ha = set_units(burn_area_ha, NULL)) %>% 
+  mutate(burn_area_acre = set_units(burn_area_acre, NULL))
+
+```
+
+
+```{r calc percent area burned at high sev RAVG}
+
+# Fore loop to Extract severity for each buffer
+
+#Create empty data frame: 
+sev_2020_fires_ravg <- data.frame()
+
+
+for (i in 1:nrow(perim3)) {
+  #for (i in 1:100) {
+  
+  #Select single buffer polygon
+  single_fire <- perim3 %>% 
+    filter(FIRE_NAME == perim3$FIRE_NAME[i]) 
+  
+  #Run function to extract raster info for each buffer:
+  a <- sev_extract(fire = single_fire, severity_raster = sev_ravg)
+  
+  # Calculate proportion of different severity levels
+  
+  prop_sev <- a %>% 
+    group_by(ravg_reclass, .drop = FALSE) %>% 
+    tally() %>% 
+    mutate(prop = n/sum(n)*100)
+  
+  prop_low_unchange_combo <- a %>% 
+    group_by(ravg_reclass_combo, .drop = FALSE) %>% 
+    tally() %>% 
+    mutate(prop = n/sum(n)*100)
+  
+  #Put data into a data.frame
+  data_summary <- data.frame(FIRE_NAME = perim3$FIRE_NAME[i], 
+                             perc_unchanged = prop_sev$prop[prop_sev$ravg_reclass == "Unchanged"], 
+                             perc_low = prop_sev$prop[prop_sev$ravg_reclass == "Low"], 
+                             perc_low_unchanged = prop_low_unchange_combo$prop[prop_low_unchange_combo$ravg_reclass_combo == "Unchanged/Low"], 
+                             perc_mod = prop_sev$prop[prop_sev$ravg_reclass == "Moderate"], 
+                             perc_high = prop_sev$prop[prop_sev$ravg_reclass == "High"])
+  
+  #Bind to the sev_metrics data frame: 
+  sev_2020_fires_ravg <- rbind(sev_2020_fires_ravg, data_summary)
+}
+
+
+sev_2020_fires <- sev_2020_fires_ravg %>% 
+  dplyr::select(-perc_low, -perc_low_unchanged, -perc_unchanged, -perc_mod) %>% 
+  rename(perc_high_ravg = perc_high) %>% 
+  left_join(., as.data.frame(perim3)[ , c("FIRE_NAME", "GIS_ACRES", "burn_area_acre")], 
+            by = "FIRE_NAME")
+
+
+```
+
+
+```{r extract grid 90 ravg severity}
+sev_ravg_extract <- raster::extract(sev_ravg, grid_90_reduce, 
+                                     method = "bilinear", df = TRUE)
+
+#Add rdnbr and dnbr attributes to the grid_90 data set: 
+grid_90_reduce$ravg_rdnbr <- sev_ravg_extract$ravg_allfires_2020_RdNBR
+
+#Check output
+slice_sample(grid_90_reduce, n = 10)
+
+#Reclassify RdNBR as low, moderate, or high severity fire: 
+# Follow Table 1 in Lydersen et al 2016 (Fire Ecology) for Initial RdNBR 
+  # Assessments. I believe these thresholds are from Miller & Quayle 2015, but 
+  # they don't have a clear table showing thresholds. 
+#Also reclassify as high severity (1) or not (0)
+
+grid_90_reduce <- grid_90_reduce %>% 
+  mutate(rdnbr_ravg_cat = case_when(
+    ravg_rdnbr < 79 ~ "unchanged", 
+    ravg_rdnbr >= 79 & ravg_rdnbr < 361 ~ "low", 
+    ravg_rdnbr >= 361 & ravg_rdnbr < 733 ~ "moderate", 
+    ravg_rdnbr >= 733 ~ "high", 
+    TRUE ~ NA_character_)) %>% 
+  mutate(rdnbr_ravg_high = if_else(ravg_rdnbr >= 733, 1, 0))
+
+slice_sample(grid_90_reduce, n = 10)
+
+rm(sev_ravg_extract)
+```
+
+
+```{r change projections to match gee}
+#RAVG Severity and Grid: 
+st_crs(grid_90_reduce)[1] == proj4string(sev_gee)#no
+grid_90_reduce <- st_transform(grid_90_reduce, crs = proj4string(sev_gee))
+st_crs(grid_90_reduce)[1] == proj4string(sev_gee)
+
+
+#gee Severity and perimeters: 
+st_crs(perim3)[1] == proj4string(sev_gee) #no
+perim3 <- st_transform(perim3, crs = proj4string(sev_gee))
+st_crs(perim3)[1] == proj4string(sev_gee)
+
+
+
+```
+
+
+
+```{r calc percent area burned at high sev GEE}
+
+# Fore loop to Extract severity for each buffer
+
+#Create empty data frame: 
+sev_2020_fires_gee <- data.frame()
+
+
+for (i in 1:nrow(perim3)) {
+  #for (i in 1:100) {
+  
+  #Select single buffer polygon
+  single_fire <- perim3 %>% 
+    filter(FIRE_NAME == perim3$FIRE_NAME[i]) 
+  
+  #Run function to extract raster info for each buffer:
+  a <- sev_extract(fire = single_fire, severity_raster = sev_gee)
+  
+  # Calculate proportion of different severity levels
+  
+  prop_sev <- a %>% 
+    group_by(ravg_reclass, .drop = FALSE) %>% 
+    tally() %>% 
+    mutate(prop = n/sum(n)*100)
+  
+  prop_low_unchange_combo <- a %>% 
+    group_by(ravg_reclass_combo, .drop = FALSE) %>% 
+    tally() %>% 
+    mutate(prop = n/sum(n)*100)
+  
+  #Put data into a data.frame
+  data_summary <- data.frame(FIRE_NAME = perim3$FIRE_NAME[i], 
+                             perc_unchanged = prop_sev$prop[prop_sev$ravg_reclass == "Unchanged"], 
+                             perc_low = prop_sev$prop[prop_sev$ravg_reclass == "Low"], 
+                             perc_low_unchanged = prop_low_unchange_combo$prop[prop_low_unchange_combo$ravg_reclass_combo == "Unchanged/Low"], 
+                             perc_mod = prop_sev$prop[prop_sev$ravg_reclass == "Moderate"], 
+                             perc_high = prop_sev$prop[prop_sev$ravg_reclass == "High"])
+  
+  #Bind to the sev_metrics data frame: 
+  sev_2020_fires_gee <- rbind(sev_2020_fires_gee, data_summary)
+}
+
+
+sev_2020_fires_gee2 <- sev_2020_fires_gee %>% 
+  dplyr::select(-perc_low, -perc_low_unchanged, -perc_unchanged, -perc_mod) %>% 
+  rename(perc_high_gee = perc_high) 
+
+sev_2020_fires <- left_join(sev_2020_fires, sev_2020_fires_gee2)
+```
+
+
+```{r extract grid 90 gee severity}
+sev_gee_extract <- raster::extract(sev_gee, grid_90_reduce, 
+                                     method = "bilinear", df = TRUE)
+
+#Add rdnbr and dnbr attributes to the grid_90 data set: 
+grid_90_reduce$gee_rdnbr <- sev_gee_extract$ravg_fires_run_with_gee_2020_dNBR
+
+#Check output
+slice_sample(grid_90_reduce, n = 10)
+
+#Reclassify RdNBR as low, moderate, or high severity fire: 
+# Follow Table 1 in Lydersen et al 2016 (Fire Ecology) for Initial RdNBR 
+  # Assessments. I believe these thresholds are from Miller & Quayle 2015, but 
+  # they don't have a clear table showing thresholds. 
+#Also reclassify as high severity (1) or not (0)
+
+grid_90_reduce <- grid_90_reduce %>% 
+  mutate(rdnbr_gee_cat = case_when(
+    gee_rdnbr < 79 ~ "unchanged", 
+    gee_rdnbr >= 79 & gee_rdnbr < 361 ~ "low", 
+    gee_rdnbr >= 361 & gee_rdnbr < 733 ~ "moderate", 
+    gee_rdnbr >= 733 ~ "high", 
+    TRUE ~ NA_character_)) %>% 
+  mutate(rdnbr_gee_high = if_else(gee_rdnbr >= 733, 1, 0))
+
+slice_sample(grid_90_reduce, n = 10)
+
+
+rm(sev_gee_extract)
+```
+
+
+
+## Compare Percent of Area Burned at High Severity:
+
+I first calculated the area classified as "high severity" for each of the 18 fires that were run with both RAVG and Google Earth Engine. RAVG and GEE estimates are strongly correlated (Pearson's Correlation = `r round(cor(sev_2020_fires$perc_high_ravg, sev_2020_fires$perc_high_gee), 3)`, p-value = `r signif(cor.test(sev_2020_fires$perc_high_ravg, sev_2020_fires$perc_high_gee)$p.value, 3)`). 
+
+The Caldwell Fire appears to be an outlier. It has a RAVG percent high severity estimate of 59% and a GEE percent high severity estimate of 82%. This was an early season fire (July 22, 2020 through September 1, 2020), so it is likely that the date range I used in GEE was not appropriate.
+
+```{r compared ravg and gee per high sev, include = TRUE}
+sev_2020_fires %>% 
+  mutate(Caldwell = if_else(FIRE_NAME== "CALDWELL", "Caldwell", "Other")) %>% 
+ggplot(., aes(x = perc_high_ravg, y = perc_high_gee, color = Caldwell)) +
+  geom_point() +
+  scale_color_manual(values = c("red", "black")) +
+  labs(x = "RAVG Percent High Severity", y = "GEE Percent High Severity", color = "Fire") +
+  geom_abline(slope = 1, intercept = 0)+
+  theme_classic()
+
+# cor(sev_2020_fires$perc_high_ravg, sev_2020_fires$perc_high_gee)
+# cor.test(sev_2020_fires$perc_high_ravg, sev_2020_fires$perc_high_gee)
+```
+
+
+
+## Compare RdNBR estimates on 90-m grid: 
+
+Next, let's compare severity classifications using a 90m grid across each fire. For this analysis, I used bilinear interpolation to extract the RdNBR value at each point on a 90-m grid across each fire. I then classified these RdNBR values as unchanged, low, moderate, or high, based on Lydersen et al. 2018 for initial severity estimates.  
+
+First, let's look at the confusion matrix across all categories (unchanged, low, moderate, and high severity). Overall, there is 78% accuracy (correspondence) between the two methods. Sensitivity (which measures how often the two methods agree that a point had the same severity classification) was highest for the high severity classification (92%) and lowest for the unchanged classification (53%). Specificity (which measures how often the two methods agree that points do not belong to a given severity classification) was highest for unchanged severity (97.6%) and lowest for low severity (89.3%). 
+
+```{r confusion matrix all categories 90 m grid, include=TRUE}
+
+sev_estimates <- grid_90_reduce %>% 
+  as.data.frame(.) %>% 
+  dplyr::select(c("FIRE_NAME", "ravg_rdnbr", "rdnbr_ravg_cat", 
+"rdnbr_ravg_high", "gee_rdnbr", "rdnbr_gee_cat", "rdnbr_gee_high")) %>% 
+    mutate(rdnbr_gee_cat = factor(rdnbr_gee_cat, levels = c("unchanged", "low",
+                                        "moderate", "high"))) %>% 
+    mutate(rdnbr_ravg_cat = factor(rdnbr_ravg_cat, levels = c("unchanged", "low",
+                                              "moderate", "high"))) %>% 
+  mutate(rdnbr_gee_high = factor(rdnbr_gee_high, levels = c("0", "1"))) %>% 
+  mutate(rdnbr_ravg_high = factor(rdnbr_ravg_high, levels = c("0", "1"))) 
+
+
+confusionMatrix(sev_estimates$rdnbr_ravg_cat, sev_estimates$rdnbr_gee_cat)
+
+```
+
+
+next, let's look at the confusion matrix for high severity vs. all other classifications. In the table below, 0 represents unchanged, low, or moderate classification; 1 represents high severity classification. Overall, there is 92.4% accuracy (correspondence) between the two methods. Sensitivity (which measures how often the two methods agree that a point had the same severity classification) is 92.6%, and specificity (which measures how often the two methods agree that points do not belong to a given severity classification) was 92%. 
+
+
+```{r confusion matrix high sev 90 m grid, include=TRUE}
+# table(sev_estimates$rdnbr_ravg_high, sev_estimates$rdnbr_gee_h include = TRUE)
+confusionMatrix(sev_estimates$rdnbr_ravg_high, sev_estimates$rdnbr_gee_high)
+
+```
+
