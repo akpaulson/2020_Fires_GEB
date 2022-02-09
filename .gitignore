@@ -4,6 +4,7 @@
 .Ruserdata
 \local
 *.Rproj
+*.DS_Store
 InProcessData/*.tif
 InProcessData/*.tif.ovr
 InProcessData/*.prj
