@@ -348,3 +348,39 @@ plot(dnbr_2020_allfires)
 # ones for which RAVG was available / or that I processed for USFS): 
 writeRaster(dnbr_2020_allfires, filename = "InProcessData/dnbr_2020_allfires.tif", 
             format = "GTiff", overwrite = FALSE)
+
+
+
+
+
+
+
+
+#### Combine RAVG fires run with GEE (Feb. 2022) ####
+
+#We are trying to compare the severity estimates with RAVG vs. GEE. So, I ran
+  # the 2020 fires that we had RAVG estimates for in GEE. I would like to combine
+  # those estimates into a single raster that I can use for comparing RAVG vs. 
+  # GEE in a different code.
+
+#Get list of each .tif file that we currently have RAVG available for: 
+ravg_run_w_gee_files_rdnbr <- list.files(path = paste0(geo_dir, "FireSeverity2020/2020_RAVG_Fires_RunWithGEE/"), 
+                              pattern = "rdnbr_w_offset.tif", full.names = TRUE)
+
+#Import those files to R: 
+ravg_run_w_gee_rdnbr <- lapply(ravg_files_dnbr, raster)
+#Set arguments for mosaic function (want highest severity value in areas that overlap, 
+# in case different time frames were used): 
+ravg_run_w_gee_rdnbr$fun = "max"
+ravg_run_w_gee_rdnbr$na.rm = TRUE
+
+#Now merge them together into a single file: 
+ravg_run_w_gee_rdnbr_combo <- do.call(mosaic, c(ravg_run_w_gee_rdnbr))
+
+plot(ravg_run_w_gee_rdnbr_combo)
+
+writeRaster(ravg_run_w_gee_rdnbr_combo, filename = "InProcessData/ravg_fires_run_with_gee_2020_dNBR.tif", 
+            format = "GTiff", overwrite = FALSE)
+
+
+
