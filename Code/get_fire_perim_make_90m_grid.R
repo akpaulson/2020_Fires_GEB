@@ -35,7 +35,7 @@ perim_2020 <- st_read(dsn = paste0(geo_dir, "Historic_Fire_Perimeters/fire20_1.s
 #I think warnings are okay - this layer has a lot of ring boundary intersection 
   # problems when I've used it before.  
 
-plot(st_geometry(perim_2020))
+# plot(st_geometry(perim_2020))
 
 #Prepare list of fires - need to check which ones have severity info via RAVG/
   #which ones need to be completed in GEE. 
@@ -94,9 +94,39 @@ perim_2020_gee <- perim_2020 %>%
 st_write(perim_2020_gee, dsn = "InProcessData/perim_2020_gee.shp", overwrite = FALSE)
 #warnings appear to not be a problem: https://github.com/r-spatial/sf/issues/306
 
+#We also want to compare the severity estimates for RAVG vs. Google Earth Engine
+  # Is the GEE approach that we've been using comparable to the severity 
+  # estimates from RAVG? To answer that, I need a shapefile with the 2020 
+  # fires that we had severity estimates for from RAVG. 
 
+perim_2020_ravg <- perim_2020 %>% 
+  slice_head(n = 40) %>% 
+  #remove RAVG fires (could probably do this programmatically, oh well): 
+  filter(FIRE_NAME %in% c("AUGUST COMPLEX FIRES", 
+                           "CREEK", 
+                           "NORTH COMPLEX", 
+                           "CASTLE", 
+                           "SLATER", 
+                           "RED SALMON COMPLEX", 
+                           "DOLAN", 
+                           "BOBCAT", 
+                           "W-5 COLD SPRINGS", 
+                           "CALDWELL", 
+                           "LOYALTON", 
+                           "APPLE", 
+                           "LAKE", 
+                           "SHEEP", 
+                           "SLINK", 
+                           "GOLD", 
+                           "HOG", 
+                           "DEVIL")) %>% 
+  # Add Fire_ID and Year columns for processing in GEE: 
+  mutate(Fire_ID = FIRE_NAME, 
+         Year = "2020")
 
+#Save this shapefile for GEE processing: 
 
+st_write(perim_2020_ravg, dsn = "InProcessData/perim_2020_ravg.shp", overwrite = FALSE)
 
 
 
