@@ -9,9 +9,7 @@ library(sf)
 library(tictoc)
 library(cmdstanr)
 
-## Read in subset of clean data
-#### eventually this will be the full dataset or thinned for spatial autocorr
-# shp = read_sf("InProcessData/clean_sub.shp")
+## Read in data
 shp = read_sf("local/grid_thinned_interpWeather_10.gpkg")
 
 d = st_drop_geometry(shp) %>% 
@@ -72,3 +70,10 @@ toc()
 bm_veg$data2 = d_orig
 
 write_rds(bm_veg, "Models/bm_veg.rds")
+
+## Read back in to get Bayes r2
+bm = read_rds('Models/bm_fire.rds')
+bayes_R2(bm) #0.22
+
+bm_veg = read_rds('Models/bm_veg.rds')
+bayes_R2(bm_veg) #0.20
