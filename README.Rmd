@@ -35,9 +35,9 @@ __*Code Descriptions:*__
     
 * *__Spatial autocorrelation:__*
 
-    + asdf
+    + __15_thin_grid.R:__ Spatially thin the grid of data points by removing every nth point in X and Y dimentions.
 
-    + asdf
+    + __20_examing_autocorr.R:__ Quantify spatial autocorrelation and make correllograms to visualize it.
     
 * *__Modeling fire severity:__*
 
@@ -54,6 +54,8 @@ __*Code Descriptions:*__
     + __calc_percent_high_sev.R:__ Code to calculate the percent fire area that burned at unchanged, low, moderate, or high severity. Presented in Figure S3. 
     
     + __econlosses_fig.R:__ loess plots for qualitative look at economic costs over time.  
+    
+    + __16_make_summary_tables.Rmd:__ Compute average percent high severity within different groups (veg type, ecoregion, etc.)
     
 * *__Extraneous code:__*
 
