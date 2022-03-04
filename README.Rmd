@@ -41,16 +41,22 @@ __*Code Descriptions:*__
     
 * *__Modeling fire severity:__*
 
-    + asdf
+    + __model_build.R:__ Organize data and run two Bayesian models.
     
-    + asdf
+    + __par_ests.R:__ Pull draws from model fits to generate parameter estimate summaries and dot plots.
+    
+    + __marg_effs.R:__ Pull veg model draws, make predictions and plot marginal effects for select vegetation types.
+    
+    + __fuel_v_weather.R:__ Looks at importance of predictor variables at the fire level. Ultimately produces a figure ranking fires for each variable and produces some tabular summaries along the way.  
 
 * *__Additional Figure and Table Preparation:__*
 
     + __calc_percent_high_sev.R:__ Code to calculate the percent fire area that burned at unchanged, low, moderate, or high severity. Presented in Figure S3. 
     
-* *__Extraneous code:*
-
-    + __compare_ravg_vs_gee.Rmd:__ Simple comparison of initial fire severity estimates produced using the RAVG vs Google Earth Engine methods. 
+    + __econlosses_fig.R:__ loess plots for qualitative look at economic costs over time.  
     
-    + asdf
+* *__Extraneous code:__*
+
+    + __compare_ravg_vs_gee.Rmd:__ Simple comparison of initial fire severity estimates produced using the RAVG vs Google Earth Engine methods.
+    
+    + __paper_facts.Rmd:__ Some misc code for values needed during writing.  

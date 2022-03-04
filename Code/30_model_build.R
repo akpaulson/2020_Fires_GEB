@@ -1,6 +1,6 @@
 ## Purpose: Build Pr. HS models with fuels and weather as predictors
 ## Author: Zack Steel
-## Upstream: data_prep.R
+## Upstream: 15_thin_grid.R; 20_examine_autocorr.R
 ## Downstream: par_ests.R; fuel_v_weather.R
 
 library(tidyverse)
@@ -10,20 +10,21 @@ library(tictoc)
 library(cmdstanr)
 
 ## Read in data (will need to download from OSF)
-# shp = read_sf("local/grid_thinned_interpWeather_10.gpkg")
-shp = read_sf("CleanData/grid_90_clean_interpWeather.shp")
+shp = read_sf("local/grid_thinned_interpWeather_10.gpkg")
+# shp = read_sf("CleanData/grid_90_clean_interpWeather.shp")
 
+## Select variables of interest
 d = st_drop_geometry(shp) %>% 
   rename_all(tolower) %>% 
   dplyr::select(grid_id, fire_na, ecrgn_s, tslf:covrtyp, evt_phy, cwhr_gp,
                 dnbr:rdnbr_h, bi:fm1000, ads_mort = m__12_1)
 
-# what veg types to keep? Keep those that have at least 1% of the data points
+## Keep those veg types that have at least 1% of the data points
 cwhr_count = table(d$cwhr_gp) %>% sort(decreasing=TRUE)
 thresh = .01 * nrow(d)
 cwhr_keep = names(cwhr_count)[cwhr_count > thresh]
 
-## Scale variables (some we may want to transfor first (e.g., ads_mort))
+## Scale variables 
 scale2 <- function(x, na.rm = TRUE) (x - mean(x, na.rm = na.rm)) / 
   sd(x, na.rm = na.rm)
 
@@ -44,7 +45,7 @@ bm = brm(rdnbr_h ~ tslf + ads_mort + vpd + windspd + fm1000 +
            (1 | cwhr_gp),
               family = bernoulli("logit"), 
               data = ds,
-              chains = 4, cores = 4,
+              chains = 4, cores = 4, iter = 100,
          backend = "cmdstanr")
 toc()
 

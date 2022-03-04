@@ -1,11 +1,10 @@
 ## Purpose: socioeconomic trends figure
-## Project: 2020_Fires_GEB
 
 library(tidyverse)
 library(patchwork)
 library(cowplot)
 
-## read in data from Hugh
+## read in data f
 d = read_csv('RawData/CalFireTrends_1980-2020.csv') %>% 
   filter(year > 2002) %>% 
   select(year, cost = 'cost+damage $billions', cost_adj = 'cost inflation adjusted (2020 $s)',
