@@ -1,28 +1,56 @@
 ---
-title: "ReadMe"
-output: html_document
+title: "Code for: \"The 2020 California fire season: A year like no other, a return to the past, or a harbinger of the future?\""
+output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+__*Description:*__ This document outlines the R code used for data preparation, analysis, and figure production for the following manuscript: 
 
-## R Markdown
+Safford, Hugh D., A.K. Paulson, Z.L. Steel, D.J.N. Young, and R. Wayman. XXXX. The 2020 California fire season: A year like no other? A return to the past? Or a harbinger of the future? XXXX XX:XX-XX. 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+__*Code contributors:*__ [Alison K. Paulson](github.com/akpaulson), [Zachary L. Steel](github.com/zacksteel), [Derek J. N. Young](github.com/youngdjn)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+__*Code Descriptions:*__
 
-```{r cars}
-summary(cars)
-```
+* *__Data Preparation:__*
 
-## Including Plots
+    + __get_fire_perim_make_90m_grid.R:__ This code extracts the fire perimeters for the 40 largest California fires in 2020 and creates a grid of points with 90 m spacing within each fire perimeter. 
+    
+    + __combine_fire_progressions.R:__ Creates a raster with the date of fire progression for each of the 40 largest California fires in 2020.
+    
+    + __extract_gridMET.R:__ Extract [gridMET](http://www.climatologylab.org/gridmet.html) weather data for each point in the 90m grid (from get_fire_perim_make_90m_grid.R) based on the date of burning (from combine_fire_progressions.R).
+    
+    + __combine_severity_rasters.R:__ Combine all rasters with estimates of initial fire severity for the 40 largest 2020 CA fires. Severity data from [RAVG](https://burnseverity.cr.usgs.gov/products/ravg) and a modified version of the Google Earth Engine method published by [Parks et al. 2018](https://www.mdpi.com/2072-4292/10/6/879).
+    
+    + __combine_pfr.R:__ Combines presettlement fire regime (PFR) data from all CalVeg Zones. PFR data are from the [Fire Return Interval Departure Database, FRID](https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836). 
+    
+    + __calveg_cwhr_lookuptable.R:__ Create a lookup table for [CALVEG](https://www.fs.usda.gov/detail/r5/landmanagement/resourcemanagement/?cid=stelprdb5347192) CWHR codes for rasterizing cwhr data. 
+    
+    + __extract_veg_tslf_sev.R:__ This code extracts the values for presettlement fire regime (PFR from [FRID](https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836)), vegetation cover type (Existing Vegetation Type from Landfire ([EVT](https://landfire.gov/evt.php)), and CWHR type from [CALVEG](https://www.fs.usda.gov/detail/r5/landmanagement/resourcemanagement/?cid=stelprdb5347192)), fire severity (from combine_severity_rasters.R), time since last fire from [FRID]((https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836)), and  fire regime condition class from [FRID](https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836) for each of the points in the 90m grid across the 40 largest fires in California in 2020. Grid was made in the get_fire_perim_make_90m_grid.R code.
+    
+    + __extract_mortality.R:__ Extract and combine [USFS Aerial Detection Monitoring](https://www.fs.usda.gov/detail/r5/forest-grasslandhealth/?cid=fsbdev3_046696) data in California from 2012-2019 (very coarse estimate of tree mortality). Extract mortality estimate for each point in the 90m grid. 
+    
+    + __data_prep.R:__ Combine all of the different data sets together and prepare data for modeling (remove NA values and problematic fires - Mountain View and Bond). 
+    
+    + __FINAL DATASET:__ We archived the final, derived dataset used for modeling in this manuscript at **INSERT CITATION.**
+    
+* *__Spatial autocorrelation:__*
 
-You can also embed plots, for example:
+    + asdf
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+    + asdf
+    
+* *__Modeling fire severity:__*
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+    + asdf
+    
+    + asdf
+
+* *__Additional Figure and Table Preparation:__*
+
+    + __calc_percent_high_sev.R:__ Code to calculate the percent fire area that burned at unchanged, low, moderate, or high severity. Presented in Figure S3. 
+    
+* *__Extraneous code:*
+
+    + __compare_ravg_vs_gee.Rmd:__ Simple comparison of initial fire severity estimates produced using the RAVG vs Google Earth Engine methods. 
+    
+    + asdf
