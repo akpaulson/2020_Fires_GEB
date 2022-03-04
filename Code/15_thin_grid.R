@@ -1,4 +1,8 @@
-## Load the grid, try to reproject to its original projection so points are in rows and columns, and then thin by removing every Xth row and column.
+## Purpose: Load the grid of spatial point samples, reproject to its original projection so points are in precise rows and columns, and then thin by removing every Xth row and column.
+## Project: 2020_Fires_GEB
+## Upstream: data_prep.R
+## Downstream: 20_examine_autocorr.R; model_build.R
+
 
 library(sf)
 library(tidyverse)
@@ -8,7 +12,6 @@ library(here)
 #### Setup (same for all scripts) ####
 data_dir = readLines(here("data_dir.txt"), n=1) # The location of root of the data directory on your computer should be specified in "data_dir.txt" (ignored by git)
 source(here("Code/00_shared_functions_and_globals.R")) # This defines the function `datadir()` which makes it easy to refer to data that is stored outside the repo
-# Here's an example: d = st_read(datadir("CleanData/grid_90_clean"))
 
 
 #### Main script ####
@@ -70,7 +73,7 @@ thin_grid = function(grid, thin_factor) {
 grid_fire_chunks = split(grid_proj,f=grid_proj$FIRE_NA)
 
 
-## thin it for a few different thin factors
+## thin it for a few different thin factors (final number in output filename)
 
 thinned_grid_list = map(.x = grid_fire_chunks, .f = thin_grid, thin_factor=2)
 grid_thinned = do.call("rbind",thinned_grid_list)

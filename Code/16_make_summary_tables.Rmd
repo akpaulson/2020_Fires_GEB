@@ -1,3 +1,9 @@
+## Purpose: Summarize fire deverity in vegetation, ecoregion, fire event categories, TSLF categories,
+## Project: 2020_Fires_GEB
+## Upstream: 15_thin_grid.R
+## Downstream: (none)
+
+
 ---
 title: "2020 CA fire summary stats"
 output:
@@ -22,7 +28,6 @@ library(DT)
 
 data_dir = readLines(here("data_dir.txt"), n=1) # The location of root of the data directory on your computer should be specified in "data_dir.txt" (ignored by git)
 source(here("Code/00_shared_functions_and_globals.R")) # This defines the function `datadir()` which makes it easy to refer to data that is stored outside the repo
-# Here's an example: d = st_read(datadir("CleanData/grid_90_clean"))
 
 d = st_read(datadir("CleanData/grid_thinned_02.gpkg"))
 d_backup = d
