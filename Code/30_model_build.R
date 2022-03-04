@@ -1,5 +1,5 @@
 ## Purpose: Build Pr. HS models with fuels and weather as predictors
-## Project: 2020_Fires_GEB
+## Author: Zack Steel
 ## Upstream: data_prep.R
 ## Downstream: par_ests.R; fuel_v_weather.R
 
@@ -9,8 +9,9 @@ library(sf)
 library(tictoc)
 library(cmdstanr)
 
-## Read in data
-shp = read_sf("local/grid_thinned_interpWeather_10.gpkg")
+## Read in data (will need to download from OSF)
+# shp = read_sf("local/grid_thinned_interpWeather_10.gpkg")
+shp = read_sf("CleanData/grid_90_clean_interpWeather.shp")
 
 d = st_drop_geometry(shp) %>% 
   rename_all(tolower) %>% 

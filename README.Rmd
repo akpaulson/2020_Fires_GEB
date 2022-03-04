@@ -7,7 +7,7 @@ __*Description:*__ This document outlines the R code used for data preparation, 
 
 Safford, Hugh D., A.K. Paulson, Z.L. Steel, D.J.N. Young, and R. Wayman. XXXX. The 2020 California fire season: A year like no other? A return to the past? Or a harbinger of the future? XXXX XX:XX-XX. 
 
-__*Code contributors:*__ [Alison K. Paulson](github.com/akpaulson), [Zachary L. Steel](github.com/zacksteel), [Derek J. N. Young](github.com/youngdjn)
+__*Code contributors:*__ [Alison K. Paulson](https://github.com/akpaulson), [Zachary L. Steel](https://github.com/zacksteel), [Derek J. N. Young](https://github.com/youngdjn)
 
 __*Code Descriptions:*__
 
