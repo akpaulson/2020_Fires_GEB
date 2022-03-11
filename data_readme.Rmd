@@ -1,0 +1,113 @@
+---
+title: "Metadata for derivative data used in \"The 2020 California fire season: A year like no other? A return to the past? Or a harbinger of the future?\""
+date: "Last Updated `r format(Sys.time(), '%B %d %Y')`"
+output: html_document
+---
+
+These datasets were derived from several published datasets, and were produced for use in the following manuscript: 
+
+Safford, Hugh D., A.K. Paulson, Z.L. Steel, D.J.N. Young, and R. Wayman. XXXX. The 2020 California fire season: A year like no other? A return to the past? Or a harbinger of the future? XXXX XX:XX-XX. 
+
+**Description:** Data extracted for each point on a 90 m grid within each fire boundary from the 40 largest fires in California, USA during 2020. Most of these data are derived from existing datasets, as described below. The exception is fire severity data, some of which was derived from the Rapid assessment of Vegetation Condition after Wildfire [RAVG](https://burnseverity.cr.usgs.gov/ravg/) dataset, and some of which we produced with Google Earth Engine using a modified version of [Parks et al. (2018)](https://www.mdpi.com/2072-4292/10/6/879).
+
+**Code:** The R code for deriving these datasets and conducting the analyses from the paper is located at [https://github.com/akpaulson/2020_Fires_GEB](https://github.com/akpaulson/2020_Fires_GEB). 
+
+
+**grid_90_clean_interpWeather.zip**
+
++ Contains: 
+    + grid_90_clean_interpWeather.dbf
+    + grid_90_clean_interpWeather.shp
+    + grid_90_clean_interpWeather.prj
+    + grid_90_clean_interpWeather.shx 
+
+
++ Column headers and metadata: see below. 
+    
+    
+**grid_thinned_interpWeather_10.gpkg**
+
++ Description: Same as data above, but thinned by a factor of 10. 
+
++ Column headers and metadata: see below. 
+
+
+**Column headers and metadata (same for both datasets)**
+
++ grid_id: Unique grid point identification number which includes the name of the fire that the grid point falls within
+
++ AGENCY: Agency information; extracted the value at the point location from the Fire Perimeters through 2020 dataset (fires20_1.shp), from [CAL FIRE FRAP](https://frap.fire.ca.gov/mapping/gis-data/)  (CAL FIRE Fire and Resource Assessment Program).
+
++ FIRE_NA: Name of the fire; extracted the value at the point location from the Fire Perimeters through 2020 dataset (fires20_1.shp), from [CAL FIRE FRAP](https://frap.fire.ca.gov/mapping/gis-data/)  (CAL FIRE Fire and Resource Assessment Program).
+
++ INC_NUM: Incident number for the fire; extracted the value at the point location from the Fire Perimeters through 2020 dataset (fires20_1.shp), from [CAL FIRE FRAP](https://frap.fire.ca.gov/mapping/gis-data/)  (CAL FIRE Fire and Resource Assessment Program).
+
++ ALARM_D: Date fire was observed; extracted the value at the point location from the Fire Perimeters through 2020 dataset (fires20_1.shp), from [CAL FIRE FRAP](https://frap.fire.ca.gov/mapping/gis-data/)  (CAL FIRE Fire and Resource Assessment Program).
+
++ CONT_DA: Date fire was contained; extracted the value at the point location from the Fire Perimeters through 2020 dataset (fires20_1.shp), from [CAL FIRE FRAP](https://frap.fire.ca.gov/mapping/gis-data/)  (CAL FIRE Fire and Resource Assessment Program).
+
++ CAUSE: Cause of fire; extracted the value at the point location from the Fire Perimeters through 2020 dataset (fires20_1.shp), from [CAL FIRE FRAP](https://frap.fire.ca.gov/mapping/gis-data/)  (CAL FIRE Fire and Resource Assessment Program).
+
++ TSLF: Time (years) since last fire. Extracted the value at the point location from the [Fire Return Interval Departure (FRID)](https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836) datset.  
+
++ mCC_FRI: Fire regime condition class. Extracted the value at the point location from the [Fire Return Interval Departure (FRID)](https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836) datset.
+
++ PFR: Pre-settlement fire regime. Extracted the value at the point location from the [Fire Return Interval Departure (FRID)](https://www.fs.usda.gov/detail/r5/landmanagement/gis/?cid=STELPRDB5327836) datset.
+
++ covrtyp: Existing cover type. Extracted the value at the point location from the [CALVEG Existing Vegetation](https://data.fs.usda.gov/geodata/edw/datasets.php) dataset, downloaded in April 2021. 
+
++ LF2016_: LANDFIRE key value; extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_NAM: Ecological Systems name, EVT_Name extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_LF: Vegetation lifeform (e.g., Tree, Shrub, Herb, Sparse). Extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_PHY: Vegetation physiognomy (e.g. Grassland, Riparian, Hardwood, Sparsely Vegetated); this is EVT_PHYS extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_GP_: Collapsed vegetation type name (e.g. Grasslands and Steppes, Hammocks, Longleaf Pine); this is EVT_GP_N extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ SAF_SRM: Society of American Foresters/Society for Range Management cover type. Extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_ORD: Vegetation Physiognomic Order (FGDC Classes). This is EVT_Order extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_CLA: Vegetation Class (FGDC Classes). This is EVT_CLASS extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ EVT_SBC: Vegetation Subclass (FGDC Classes). This is EVT_SBCLS extracted from [LANDFIRE's 2016 Existing Vegetation Type](https://landfire.gov/evt.php).
+
++ dnbr: The delta normalized burn ratio (dNBR) extracted for each point using bilinear interpolation. Either derived from the Rapid assessment of Vegetation Condition after Wildfire [RAVG](https://burnseverity.cr.usgs.gov/ravg/) dataset or produced with Google Earth Engine using a modified version of [Parks et al. (2018)](https://www.mdpi.com/2072-4292/10/6/879).
+
++ rdnbr: The relativized delta normalized burn ratio (RdNBR) extracted for each point using bilinear interpolation. Either derived from the Rapid assessment of Vegetation Condition after Wildfire [RAVG](https://burnseverity.cr.usgs.gov/ravg/) dataset or produced with Google Earth Engine using a modified version of [Parks et al. (2018)](https://www.mdpi.com/2072-4292/10/6/879).
+
++ rdnbr_c: Classification of RdNBR fire severity as unchanged, low, moderate, or high severity. Based on the initial RdNBR fire severity thresholds from Table 1 in [Lydersen et al. (2016)](https://link.springer.com/article/10.4996/fireecology.1203099).
+
++ rdnbr_h: Binary classification of RdNBR fire severity as high (1) or not high (0). Based on the initial RdNBR fire severity thresholds from Table 1 in [Lydersen et al. (2016)](https://link.springer.com/article/10.4996/fireecology.1203099).
+
++ cwhr: California Wildlife Habitat Relationship System (CWHR) code extracted from the [CALVEG Existing Vegetation](https://data.fs.usda.gov/geodata/edw/datasets.php) dataset, downloaded in April 2021. 
+
++ ecrgn_s: CALVEG Ecological Units - Section extracted from the [CALVEG Existing Vegetation](https://data.fs.usda.gov/geodata/edw/datasets.php) dataset, downloaded in April 2021. The key to the different ecological unit codes is [here](https://www.fs.usda.gov/detail/r5/landmanagement/resourcemanagement/?cid=fsbdev3_048066).
+
++ dy_f_br: Day of burn at each point, determined using the "weighted by mean and distance" method of [Parks (2014)](https://www.publish.csiro.au/WF/WF13138).
+
++ bi: Burning index (), extracted from [gridMET](http://www.climatologylab.org/gridmet.html) using bilinear interpolation. 
+
++ windspd: Wind speed (m/s), extracted from [gridMET](http://www.climatologylab.org/gridmet.html) using bilinear interpolation.
+
++ vpd: Vapor pressure deficit (kPa), extracted from [gridMET](http://www.climatologylab.org/gridmet.html) using bilinear interpolation.
+
++ fm1000: 1000-hour fuel moisture (%), extracted from [gridMET](http://www.climatologylab.org/gridmet.html) using bilinear interpolation.
+
++ m__12_1: Estimated drought mortality between 2012-2016 (trees per acre), based on the United States Forest Service [Aerial Detection Monitoring Surveys](https://www.fs.usda.gov/detail/r5/forest-grasslandhealth/?cid=fsbdev3_046696). 
+
++ cwhr_nm: California Wildlife Habitat Relationship System (CWHR) name extracted from the [CALVEG Existing Vegetation](https://data.fs.usda.gov/geodata/edw/datasets.php) dataset, downloaded in April 2021.
+
++ cwhr_gp: Our reclassification of California Wildlife Habitat Relationship System (CWHR) groups into fewer, similar categories (e.g. all yellow pine CWHR types were grouped together into a single yellow pine category). 
+
+
+**References**
+
+Lydersen, J.M., Collins, B.M., Miller, J.D., Fry, D.L., and Stephens, S.L. 2016. Relating fire-caused change in forest structure to remotely sensed estimates of fire severity. Fire Ecology 12:99–116. [https://doi.org/10.4996/fireecology.1203099](https://doi.org/10.4996/fireecology.1203099)
+
+Parks, S.A. 2014. Mapping day-of-burning with coarse-resolution satellite fire-detection data. International Journal of Wildland Fire 23:215-223. [https://doi.org/10.1071/WF13138](https://doi.org/10.1071/WF13138)
+
+Parks, S.A., Holsinger, L.M., Voss, M.A., Loehman, R.A., and Robinson, N.P. 2018. Mean composite fire severity metrics computed with Google Earth Engine offer improved accuracy and expanded mapping potential. Remote Sensing 10(6):879. [https://doi.org/10.3390/rs10060879](https://doi.org/10.3390/rs10060879)
+
